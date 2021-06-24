@@ -1,0 +1,152 @@
+---
+title: "Compute Probabilities"
+author: "Sarah Teichman"
+date: "05/19/20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+library(splitstackshape)
+library(stringi)
+load("fit_ifls_7-3.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r,echo=F}
+fit <- fit_ifls
+dat <- deflate_y_dat
+post <- as.data.frame(fit)
+fit_summ <- as.data.frame(summary(fit)$summary)
+```
+
+```{r,echo=F}
+K <- 7
+Ti <- 3
+N <- 1973
+labs <- c("Agriculture","Manufacturing","Construction","Hospitality",
+          "Transportation","Business","Social Services")
+```
+
+
+```{r, echo = F}
+log_y <- log(dat$y)
+job <- array(data = NA, dim = c(N,Ti))
+for (i in 1:N) {
+  for (t in 1:Ti) {
+    job[i,t] <- which(dat$a[i,t,]==1)
+  }
+}
+wage_job_dat <- data.frame(worker = rep(1:N,3), time = sort(rep(1:3,N)),
+                            log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                            job = c(job[,1],job[,2],job[,3])) %>%
+  mutate(job = labs[job])
+```
+
+```{r, echo = F}
+beta <- fit_summ["beta",6]
+```
+
+
+```{r, echo = F}
+#samp <- sample(1:N, size = 20, replace = FALSE)
+med_z <- data.frame(par = rownames(fit_summ), med = fit_summ[,6]) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = med) %>%
+  mutate(job1 = job[,1],
+         job2 = job[,2],
+         job3 = job[,3]) %>%
+  pivot_longer(cols = c(job1,job2,job3),names_to = "time",names_prefix = "job") %>% 
+  mutate(class = labs[value],
+         dim1 = `1`,
+         dim2 = `2`) %>%
+  select(-c(value,`1`,`2`)) %>%
+  filter(time == 2) %>%
+  select(-time) %>%
+  mutate(past_class = labs[job[,1]])
+med_w <- data.frame(par = rownames(fit_summ), med = fit_summ[,6]) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = med) %>%
+  mutate(class = labs[as.numeric(class)]) %>%
+  filter(time == 2) %>%
+  mutate(dim1 = `1`,
+         dim2 = `2`) %>%
+  select(-c(time,`1`,`2`))
+res <- matrix(0, nrow = N, ncol = 7)
+res_pers <- matrix(0, nrow = N, ncol = 7)
+# get base probabilities
+for (i in 1:N) {
+  for (j in 1:K) {
+    diff <- sqrt((med_z$dim1[i] - med_w$dim1[j])^2 + (med_z$dim2[i] - med_w$dim2[j])^2)
+    res[i,j] <- -diff
+    past <- med_z$past_class[i] == labs[j]
+    res_pers[i,j] <- -beta*past + beta*(1 - past) - diff
+  }
+}
+# normalize 
+res_exp <- exp(res)
+res_pers_exp <- exp(res_pers)
+res_norm <- res_exp/rowSums(res_exp)
+res_pers_norm <- res_pers_exp/rowSums(res_pers_exp)
+```
+
+```{r, echo = F, eval = F}
+# plot 20 random people with and without persistence parameters 
+samp <- sample(1:N, size = 20, replace = FALSE)
+plot_dat <- data.frame(prob = res_norm[samp,1], prob_pers = res_pers_norm[samp,1])
+ggplot(plot_dat, aes(x = prob, y = prob_pers)) + geom_point() +
+  xlim(c(0,.5)) + ylim(c(0,.5)) + xlab("Base Probability") + 
+  ylab("Probability with Persistence Parameters")
+```
+
+```{r, echo = F, eval = F}
+ag <- job[,1] == 1 
+ss <- job[,1] == 7 
+bus <- job[,1] == 6
+# plot all 
+plot_dat <- data.frame(prob = res_norm[,1], prob_pers = res_pers_norm[,1], ag = ag)
+ggplot(plot_dat, aes(x = prob, y = prob_pers, color = ag)) + geom_point() +
+  xlim(c(0,1)) + ylim(c(0,1)) + xlab("Base Probability") + 
+  ylab("Probability with Persistence Parameters") + ggtitle("Probabilities for Agriculture") +
+  scale_color_manual(values = c("black","red")) + labs(color = "A = 1")
+plot_dat <- data.frame(prob = res_norm[,7], prob_pers = res_pers_norm[,7], ss = ss)
+ggplot(plot_dat, aes(x = prob, y = prob_pers, color = ss)) + geom_point() +
+  xlim(c(0,1)) + ylim(c(0,1)) + xlab("Base Probability") + 
+  ylab("Probability with Persistence Parameters") + ggtitle("Probabilities for Social Services")  +
+  scale_color_manual(values = c("black","red")) + labs(color = "A = 1")
+plot_dat <- data.frame(prob = res_norm[,6], prob_pers = res_pers_norm[,6],bus = bus)
+ggplot(plot_dat, aes(x = prob, y = prob_pers, color = bus)) + geom_point() +
+  xlim(c(0,1)) + ylim(c(0,1)) + xlab("Base Probability") + 
+  ylab("Probability with Persistence Parameters") + ggtitle("Probabilities for Business")  +
+  scale_color_manual(values = c("black","red")) + labs(color = "A = 1")
+```
+
+```{r, echo = F}
+res_pers_norm <- as.data.frame(res_pers_norm)
+pers_l <- pivot_longer(res_pers_norm, names_to = "sector", cols = colnames(res_pers_norm))
+res_norm <- as.data.frame(res_norm)
+base_l <- pivot_longer(res_norm, names_to = "sector", cols = colnames(res_norm))
+plot_dat <- data.frame(sector = rep(labs,N), base = base_l$value, pers = pers_l$value)
+plot_dat$remain <- as.vector(t(dat$a[,1,]))
+plot_dat$remain <- ifelse(plot_dat$remain==0,"Not in Sector in Previous Time Period","In Sector in Previous Time Period")
+ggplot(plot_dat, aes(x = base, y = pers, color = remain)) + geom_point() +
+  xlim(c(0,1)) + ylim(c(0,1)) + xlab("Base Probability") + 
+  ylab("Probability with Persistence Parameters") + ggtitle("Effect of Adding Persistence Parameters") +
+  scale_color_manual(values = c("black","red")) + 
+  facet_wrap(plot_dat$sector) + theme(legend.position = c(.7, .15), legend.title = element_blank())
+```

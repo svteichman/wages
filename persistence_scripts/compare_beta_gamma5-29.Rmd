@@ -1,0 +1,44 @@
+---
+title: "Comparing persistence parameters"
+author: "Sarah Teichman"
+date: "05/29/20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+load("fit_ifls_5-29.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r,echo=F}
+fit <- fit_ifls
+dat <- deflate_y_dat
+post <- as.data.frame(fit)
+```
+
+```{r,echo=F}
+gamma_df <- data.frame(index = 1:nrow(post), gamma = post["gamma"])
+ggplot(gamma_df, aes(x = index, y = gamma)) + geom_point() + ylab("gamma")
+beta_df <- data.frame(index = 1:nrow(post), gamma = post["beta"])
+ggplot(beta_df, aes(x = index, y = beta)) + geom_point() + ylab("beta")
+add <- unlist(post["gamma"]+post["beta"])
+plot_df <- data.frame(index = 1:length(add), addition = add)
+ggplot(plot_df, aes(x = index, y = addition)) + geom_point() + ylab("sum")
+diff_abs <- unlist(abs(post["gamma"])-abs(post["beta"]))
+abs_df <- data.frame(index = 1:length(diff_abs), diff = diff_abs)
+ggplot(abs_df, aes(x = index, y = diff)) + geom_point() + ylab("diff in abs values")
+abs_diff <- abs(unlist(post["gamma"])-unlist(post["beta"]))
+abs_df <- data.frame(index = 1:length(abs_diff), diff = abs_diff)
+ggplot(abs_df, aes(x = index, y = diff)) + geom_point() + ylab("abs value of diff")
+```
+
+```{r,echo=F}
+print_df <- data.frame(post["gamma"],post["beta"])
+print_df[(dim(post)[1] - 50):dim(post)[1],]
+```

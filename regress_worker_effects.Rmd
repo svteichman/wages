@@ -1,0 +1,68 @@
+---
+title: "Regress worker effect on covariates"
+author: "Sarah Teichman"
+date: "02/24/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_3-9-21.rda")
+load("deflate_y_dat.rda")
+```
+
+Regress the posterior means of worker effects from our model on age and sex at the first time period. 
+
+```{r, eval = F}
+fit <- fit_ifls
+fit_summ <- as.data.frame(summary(fit)$summary)
+mu_params <- grep("mu", row.names(fit_summ), value = T)
+mod_df <- data.frame(post_mean = fit_summ[mu_params,1], age = deflate_y_dat$x[,1,1],
+                     sex = deflate_y_dat$x[,1,2])
+mod <- lm(post_mean ~ age + sex, data = mod_df)
+summary(mod)
+```
+
+Regress the worker effect on age and sex for each iteration. 
+
+```{r}
+fit <- fit_ifls
+post <- as.matrix(fit)
+mu_params <- grep("mu", colnames(post), value = T)
+betaInt <- matrix(NA, nrow = nrow(post), ncol = 1)
+betaAge <- matrix(NA, nrow = nrow(post), ncol = 1)
+betaSex <- matrix(NA, nrow = nrow(post), ncol = 1)
+x <- deflate_y_dat$x
+mod_df <- data.frame(age = deflate_y_dat$x[,1,1],
+                     sex = deflate_y_dat$x[,1,2])
+mod_df$mu <- rep(NA, nrow(mod_df))
+for (i in 1:nrow(post)) {
+  mod_df$mu <- post[i, mu_params]
+  mod <- lm(mu ~ age + sex, data = mod_df)
+  #betas[i,] <- mod$coefficients
+  betaInt[i,1] <- mod$coefficients[1]
+  betaAge[i,1] <- mod$coefficients[2]
+  betaSex[i,1] <- mod$coefficients[3]
+}
+colnames(betaInt) <- "Intercept"
+colnames(betaAge) <- "Age"
+colnames(betaSex) <- "Sex"
+mcmc_intervals(betaInt, prob = 0.80, prob_outer = 0.95) + 
+  ggtitle("95% Credible Intervals for Regression Coefficients")
+```
+
+```{r}
+mcmc_intervals(betaAge, prob = 0.80, prob_outer = 0.95) + 
+  ggtitle("95% Credible Intervals for Regression Coefficients")
+```
+
+```{r}
+mcmc_intervals(betaSex, prob = 0.80, prob_outer = 0.95) + 
+  ggtitle("95% Credible Intervals for Regression Coefficients")
+```

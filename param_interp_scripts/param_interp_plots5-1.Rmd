@@ -1,0 +1,184 @@
+---
+title: "Parameter Interpretation - IFLS data"
+author: "Sarah Teichman"
+date: "05/01/20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+library(splitstackshape)
+library(stringi)
+library(parallelDist)
+library(labdsv)
+library(ape)
+load("fit_ifls_4-30.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r,echo=F}
+fit <- fit_ifls
+dat <- deflate_y_dat
+post <- as.data.frame(fit)
+fit_summ <- as.data.frame(summary(fit)$summary)
+```
+
+```{r,echo=F}
+K <- 7
+Ti <- 3
+N <- 1973
+```
+
+#### Posterior histograms for $\sigma^2_k$ 
+
+Plotting posterior histograms from $\sigma^2_k$ parameters. 
+
+```{r, echo = F}
+n_sim <- length(post$sigmasq_w0)
+labs <- c("Agriculture","Manufacturing","Construction","Hospitality",
+          "Transportation","Business","Social Services")
+post_hist <- data.frame(val = c(post$`sigmasq_k[1]`,post$`sigmasq_k[2]`,post$`sigmasq_k[3]`,
+                                post$`sigmasq_k[4]`,post$`sigmasq_k[5]`,post$`sigmasq_k[6]`,
+                                post$`sigmasq_k[7]`),
+                        class = c(rep("class1",n_sim),rep("class2",n_sim),rep("class3",n_sim),
+                                 rep("class4",n_sim),rep("class5",n_sim),rep("class6",n_sim),
+                                 rep("class7",n_sim))) %>%
+  mutate(class = labs[class])
+```
+
+Computing empirical wage variances across firm classes. 
+
+```{r, echo = F}
+log_y <- log(dat$y)
+job <- array(data = NA, dim = c(N,Ti))
+for (i in 1:N) {
+  for (t in 1:Ti) {
+    job[i,t] <- which(dat$a[i,t,]==1)
+  }
+}
+wage_job_dat <- data.frame(worker = rep(1:N,3), time = sort(rep(1:3,N)),
+                            log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                            job = c(job[,1],job[,2],job[,3])) %>%
+  mutate(job = labs[job])
+#wage_job_dat$job <- as.factor(wage_job_dat$job)
+class_var <- wage_job_dat %>%
+  group_by(job) %>%
+  summarise(variance = var(log_wage)) %>% 
+  mutate(class = job)
+ggplot() + geom_histogram(data = post_hist, aes(x = val)) + 
+  geom_vline(data = class_var, aes(xintercept = variance), color = "red") + 
+  facet_wrap(~class) + xlab("variance") + ggtitle("Posterior Variances for Classes")
+```
+
+#### Size of each Class over Time 
+
+```{r,echo=F}
+job_long <- as.data.frame(job) %>% pivot_longer(cols = c(V1,V2,V3),names_to = "time",
+                                                names_prefix = "V") %>%
+  mutate(class = labs[value])
+order <- job_long %>% group_by(class, time) %>%
+  summarise(count = n()) %>%
+  arrange(time, count)
+job_long$class <- factor(job_long$class, levels = order$class[1:7])
+ggplot(job_long, aes(x = class)) + geom_bar() + facet_wrap(~time) + 
+  xlab("Class") + theme(axis.text.x = element_text(angle = 270, hjust = 1))
+```
+
+#### Log wages by Class and Time 
+
+```{r,echo=F}
+meds <- wage_job_dat %>% group_by(time, job) %>%
+  summarise(med = median(log_wage)) %>%
+  arrange(time, med)
+wage_job_dat$job <- factor(wage_job_dat$job, levels = meds$job[1:7])
+ggplot(wage_job_dat, aes(x = job, y = log_wage)) + geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 270, hjust = 1)) +
+  facet_wrap(~time) + xlab("Sector") + ylab("Log Wage")
+```
+
+#### Plot latent space positions 
+
+```{r,echo=F}
+med_z <- data.frame(par = rownames(fit_summ), med = fit_summ[,6]) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = med) %>%
+  mutate(job1 = job[,1],
+         job2 = job[,2],
+         job3 = job[,3]) %>%
+  pivot_longer(cols = c(job1,job2,job3),names_to = "time",names_prefix = "job") %>% 
+  mutate(class = labs[value]) %>%
+  select(-value) 
+med_w <- data.frame(par = rownames(fit_summ), med = fit_summ[,6]) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = med) %>%
+  mutate(class = labs[as.numeric(class)])
+ggplot() +  geom_point(data = med_z, aes(x = `1`, y = `2`, color = class, alpha = 0.5)) + 
+  geom_point(data = med_w, aes(x = `1`, y = `2`, fill = class), 
+             shape = 25, size = 4, color = "black")  +
+  facet_wrap(~time)
+```
+
+#### Probability transition plots - Posterior medians 
+
+```{r, echo = F}
+med_p <- data.frame(par = rownames(fit_summ), med = fit_summ[,6]) %>%
+  filter(grepl("p\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         class = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3")) %>%
+  filter(time %in% c(2,3)) %>%
+  mutate(past_class = c(rep(job[,2],each=7),rep(job[,3],each=7)),
+         class = as.numeric(class))
+trans_probs <- med_p %>% group_by(time,past_class) %>%
+  mutate(tot_sum = sum(med),
+         prop = med/tot_sum) %>%
+  group_by(time,class,past_class) %>%
+  summarise(prob_sum = sum(prop)) %>%
+  mutate(past_class1 = labs[past_class],
+         class1 = labs[class])
+ggplot(trans_probs, aes(x = past_class1, y = class1, fill = prob_sum)) + 
+  geom_tile() + facet_grid(cols = vars(time)) + 
+  xlab("Past Class") + ylab("Current Class") + labs(fill='Prob. Sum') +
+  ggtitle("Posterior medians for transition probabilities") + 
+  theme(aspect.ratio = 1) + theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x=element_text(angle=270,hjust=1)) + 
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7")
+```
+
+#### Probability transition plots - Data 
+
+```{r, echo = F}
+real_trans <- data.frame(past = c(job[,1],job[,2]), current = c(job[,2],job[,3]), 
+                         time = c(rep(2,N),rep(3,N))) %>%
+  group_by(past,time) %>%
+  mutate(tot_sum = n(),
+         prop = 1/tot_sum) %>%
+  group_by(past,current,time) %>%
+  summarise(prob_sum = sum(prop)) %>% 
+  arrange(past,time) %>%
+  mutate(current1 = labs[current],
+         past1 = labs[past])
+ggplot(real_trans, aes(x = past1, y = current1, fill = prob_sum)) + 
+  geom_tile() + facet_grid(cols = vars(time)) + 
+  xlab("Past Class") + ylab("Current Class") + labs(fill='Prob. Sum') +
+  ggtitle("True transition probabilities") + 
+  theme(aspect.ratio = 1) + theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x=element_text(angle=270,hjust=1)) + 
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7")
+```

@@ -1,0 +1,202 @@
+---
+title: "Decompose Variance"
+author: "Sarah Teichman"
+date: "04/18/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_3-9-21.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r, echo = F}
+K <- 7
+Ti <- 3
+N <- 1973
+log_y <- log(deflate_y_dat$y)
+job <- array(data = NA, dim = c(N,Ti))
+for (i in 1:N) {
+  for (t in 1:Ti) {
+    job[i,t] <- which(deflate_y_dat$a[i,t,]==1)
+  }
+}
+dat <- data.frame(log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                  worker = rep(1:N, 3),
+                  sector = c(job[,1], job[,2], job[,3]))
+```
+
+## Compare worker and sector effects between AKM and our model 
+
+```{r,echo = F}
+fit <- fit_ifls
+post <- as.matrix(fit)
+fit_summ <- as.data.frame(summary(fit)$summary)
+mu_params <- grep("mu", row.names(fit_summ), value = T)
+nu_params <- grep("nu", row.names(fit_summ), value = T)
+```
+
+### AKM variance results 
+
+```{r, echo = F}
+tot_var <- var(dat$log_wage)
+akm_df <- data.frame(log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                  worker = as.factor(rep(1:N,Ti)),
+                  sector = as.factor(c(job[,1],job[,2],job[,3])))
+mod <- lm(log_wage ~ -1 + worker + sector, data = akm_df)
+akm_worker_eff <- mod$coefficients[1:N]
+akm_sector_eff <- mod$coefficients[N:length(mod$coefficients)]
+akm_sector_eff[1] <- 0 
+worker_var <- var(akm_worker_eff)/tot_var
+sector_var <- var(akm_sector_eff)/tot_var
+df <- akm_df %>%
+  mutate(worker_effect = akm_worker_eff[worker],
+         sector_effect = akm_sector_eff[sector])
+worker_sector_cov <- cov(df$worker_effect, df$sector_effect)
+worker_var # 56% of variance from worker
+sector_var # 5% of variance from worker
+2*worker_sector_cov/tot_var # 3% of variance from covariance between worker and sector 
+```
+
+### Comparison between AKM effects and our model effect means
+
+```{r, echo = F}
+worker_df <- data.frame(akm_worker = akm_worker_eff,
+                        mod_worker = fit_summ[mu_params, 1])
+ggplot(worker_df, aes(x = akm_worker, y = mod_worker)) +
+  geom_point() + 
+  xlab("AKM worker effect") + 
+  ylab("Model worker effect")
+sector_df <- data.frame(akm_sector = akm_sector_eff,
+                        mod_sector = fit_summ[nu_params, 1])
+ggplot(sector_df, aes(x = akm_sector, y = mod_sector)) +
+  geom_point() + 
+  xlab("AKM sector effect") + 
+  ylab("Model sector effect")
+cor(worker_df$akm_worker, worker_df$mod_worker)
+cor(sector_df$akm_sector, sector_df$mod_sector)
+```
+
+## Variance of posterior means in our model
+
+```{r}
+#worker_var <- var(dat$mu)
+worker_var <- var(fit_summ[mu_params,1])
+#sector_var <- var(dat$nu)
+sector_var <- var(fit_summ[nu_params,1])
+tot_var
+worker_var/tot_var
+sector_var/tot_var
+```
+
+## Mean of posterior variances in our model 
+
+```{r,echo = F}
+post_mu <- post[,mu_params]
+post_nu <- post[,nu_params]
+mu_var <- apply(post_mu, 1, var)
+nu_var <- apply(post_nu, 1, var)
+mu_mean_var <- mean(mu_var)
+nu_mean_var <- mean(nu_var)
+```
+
+```{r}
+tot_var <- var(dat$log_wage)
+mu_mean_var / tot_var
+nu_mean_var / tot_var 
+```
+
+```{r, echo = F}
+plot_df <- data.frame(mu_var = mu_var/tot_var, nu_var = nu_var/tot_var) 
+ggplot(plot_df, aes(x = mu_var)) + geom_histogram() +
+  xlab("Proportion variance in worker effects") + ylab("Count")
+ggplot(plot_df, aes(x = nu_var)) + geom_histogram() +
+  xlab("Proportion variance in sector effects") + ylab("Counts")
+```
+
+## Mean of Posterior Covariances
+
+```{r,echo = F}
+covar <- vector(length = nrow(post))
+for (i in 1:nrow(post)) {
+  worker <- rep(post[i,mu_params], 3)
+  sector <- post[i, nu_params[job]]
+  covar[i] <- cov(worker, sector)
+}
+mean(covar)
+cov_df <- data.frame(covar = 2*covar/tot_var) 
+ggplot(cov_df, aes(x = covar)) + geom_histogram() +
+  xlab("Proportion 2*covariance in worker and sector effects") + ylab("Count")
+```
+
+## Calculate correlation between AKM and our model worker and sector effects for each iteration
+
+```{r}
+corr_worker <- vector(length = nrow(post))
+corr_sector <- vector(length = nrow(post))
+for (i in 1:nrow(post)) {
+  corr_worker[i] <- cor(post[i,mu_params], akm_worker_eff)
+  corr_sector[i] <- cor(post[i,nu_params], akm_sector_eff)
+}
+mean(corr_worker)
+mean(corr_sector)
+```
+
+## Check how moving changes individual's wage variance in model
+
+```{r}
+1/fit_summ["tau",1] #base variance
+1/fit_summ["tau_m",1] #additive variance for moving sectors 
+1/fit_summ["tau_k[1]",1]
+1/fit_summ["tau_k[1]",2]
+1/fit_summ["tau_k[1]",3]
+1/fit_summ["tau_k[1]",4]
+1/fit_summ["tau_k[1]",5]
+1/fit_summ["tau_k[1]",6]
+1/fit_summ["tau_k[1]",7]
+```
+
+## Overall wage decompostion 
+
+$$Var(f_j) = E[Var(f_j|j\in k)] + Var(E[f_j|j\in k])$$
+
+The second term is estimated by `r nu_mean_var` (nu_mean_var). The second term can be estimated by taking the average over the $\frac{1}{\tau_k}$ for each sector $k$. 
+
+We will consider the mean over the posterior mean of variance terms $\frac{1}{\tau_k}$ in each iteration. 
+
+```{r}
+tau_k_params <- grep("tau_k", row.names(fit_summ), value = T)
+post_tau_k <- post[,tau_k_params]
+var_k_means <- apply(1/post_tau_k, 1, mean)
+var_k_mean <- mean(var_k_means)
+
+(var_k_mean + nu_mean_var)
+(var_k_mean + nu_mean_var)/tot_var
+
+```
+
+Finally, in each iteration I'll get the proportion variance associated with worker and with sector. 
+
+```{r}
+prop_var <- matrix(data = NA, nrow(post), 4) 
+for (i in 1:nrow(post)) {
+  worker_var <- var(post[i, mu_params])
+  nu_var <- var(post[i, nu_params])
+  k_mean_var <- mean(1/post[i, tau_k_params])
+  prop_var[i,1] <- worker_var/tot_var
+  prop_var[i,2] <- nu_var/tot_var
+  prop_var[i,3] <- k_mean_var/tot_var
+  prop_var[i,4] <- (nu_var+k_mean_var)/tot_var
+}
+
+summary(prop_var)
+hist(prop_var[,1])
+hist(prop_var[,4])
+```

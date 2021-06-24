@@ -1,0 +1,1860 @@
+
+     ===================================================================
+
+         IIII     FFFFFFF     LLL          SSSSSS                44     
+          II       FF   F     LL          SS    SS              444     
+          II       FF         LL          SS     S             4444     
+          II       FF         LL          SSS                 44 44     
+          II       FFFFF      LL           SSSSS             44  44     
+          II       FF         LL            SSSSS           44   44     
+          II       FF         LL               SSS         44    44     
+          II       FF         LL          S     SS        44444444444   
+          II       FF         LL     L    SS    SS               44     
+         IIII     FFFF        LLLLLLLL     SSSSSS                44     
+
+     ===================================================================
+
+
+
+     I N D O N E S I A N    F A M I L Y    L I F E    S U R V E Y    7  
+
+       A survey of individuals, households, families, communities       
+          and facilities conducted in 13 provinces in Indonesia         
+                   between November 2007 and July 2008                  
+
+     ===================================================================
+
+                               Directed by                              
+
+                      John Strauss, RAND and USC                        
+
+                      Firman Witoelar, Survey Meter                     
+
+                       Bondan Sikoki, Survey Meter                      
+
+                                  and                                   
+
+                 Anna Marie Wattie, Univ. of Gadjah Mada                
+
+     ===================================================================
+
+     Financial support for the Indonesian Family Life Survey Wave 4 has 
+     been provided by the National Institute of Aging grant number 1R01 
+     AG026676 and the National Institute of Child and Human Development,
+     grant number 1R01 HD050764                                         
+
+     ===================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+              Website: http://www.rand.org/FLS/IFLS                     
+          Send all questions to ifls-supp@rand.org                      
+
+
+                       Copyright (2009)                                 
+
+INDONESIAN FAMILY LIFE SURVEY 4: CODEBOOK                               page 2  
+
+
+
+
+
+
+
+================================================================================
+
+          H   H   OOO    U   U    SS    EEEE   H   H   OOO   L     DDDD         
+          H   H  O   O   U   U   S  S   E      H   H  O   O  L     D   D        
+          H   H  O   O   U   U   S      E      H   H  O   O  L     D   D        
+          HHHHH  O   O   U   U    S     EEEE   HHHHH  O   O  L     D   D        
+          H   H  O   O   U   U     S    E      H   H  O   O  L     D   D        
+          H   H  O   O   U   U      S   E      H   H  O   O  L     D   D        
+          H   H  O   O   U   U   S  S   E      H   H  O   O  L     D   D        
+          H   H   OOO     UUU     SS    EEEE   H   H   OOO   LLLL  DDDD         
+
+
+                    SS    U   U   RRR    V    V    EEEE   Y    Y                
+                   S  S   U   U   R  R   V    V    E      Y    Y                
+                   S      U   U   R  R   V    V    E       Y  Y                 
+                    S     U   U   RRR    V    V    EEE       Y                  
+                     S    U   U   R R     V  V     E         Y                  
+                      S   U   U   R  R    V  V     E         Y                  
+                   S  S   U   U   R  R     V       E         Y                  
+                    SS     UUU    R  R     V       EEEE      Y                  
+
+
+            CCC    OOO    DDDD    EEEE   BBBB     OOO     OOO    K   K          
+           C   C  O   O   D   D   E      B   B   O   O   O   O   K  K           
+           C      O   O   D   D   E      B   B   O   O   O   O   K K            
+           C      O   O   D   D   EEE    BBBB    O   O   O   O   KK             
+           C      O   O   D   D   E      B   B   O   O   O   O   KK             
+           C      O   O   D   D   E      B   B   O   O   O   O   K K            
+           C   C  O   O   D   D   E      B   B   O   O   O   O   K  K           
+            CCC    OOO    DDDD    EEEE   BBBB     OOO     OOO    K   K          
+
+================================================================================
+
+ B O O K :       BK                                            
+ T O P I C :     CONTROL BOOK - HOUSEHOLD ROSTER AND LOCATION                                           
+
+================================================================================
+
+
+
+
+
+
+
+
+
+
+
+                               Prepared by                                      
+                Roald Euller, John Strauss, Firman Witolar                      
+                     Created on 16JUN2011 at 14:33                           
+
+INDONESIAN FAMILY LIFE SURVEY 4: CODEBOOK                                       
+--------------------------------------------------------------------------------
+ H O U S E H O L D    S U R V E Y    C O D E B O O K                 page 3
+--------------------------------------------------------------------------------
+ B O O K :       BK
+ T O P I C :     Control Book - Household Roster and Location
+
+--------------------------------------------------------------------------------
+
+DATA FILES                                                                    
+----------                                                                    
+  Data are available in SAS (9.2) export and STATA (8.0) formats.             
+  Data and electronic documentation are available on the IFLS website.        
+
+  The survey instrument contains multiple sections.  Where possible, sections 
+  have been merged together to form a single data module.  The modules are    
+  organized by level of observation.  The module names are listed below.  They
+  serve as the names of the SAS and STATA data files. The codebook is also    
+  organised by module.                                                        
+
+  The modules are:                                                            
+
+   --------------------------------------------------------------------------
+                                                             # of
+      Module    Description                                  recs
+   --------------------------------------------------------------------------
+      BK_AR0    Bk K Household size                         13536
+      BK_AR1    Bk K Household roster                       73016
+      BK_COV    Bk K Cover (Control Book)                   13536
+      BK_KRK    Bk K Household characteristics              13535
+      BK_SC     Bk K Location and sampling                  13536
+
+USER SUPPORT                                                                   
+------------                                                                   
+    These data should be used in conjunction with the Questionnaires and Users'
+    Manuals.  Check the IFLS web page for updates and answers to frequently    
+    asked questions.  Please send all questions to ifls-supp@rand.org.         
+
+USAGE NOTES                                                                    
+-----------                                                                    
+  READING THE DICTIONARY                                                       
+    For each variable in the dataset, the dictionary provides                  
+       Variable name : Typically the question number                           
+               Label : Describes variable                                      
+    Variable coding is described as follows:                                   
+               Value : Meaning of values for coded variables                   
+           Frequency : Frequency of each value                                 
+
+SPECIAL CODES                                                                  
+-------------                                                                  
+  The following values are reserved and have a special meaning:                
+      Numeric    Alphanumeric    Meaning                                       
+     5/95/995         V          Top coded/out of range                        
+     6/96/996         W          Not applicable                                
+     7/97/997         X          Refused to answer                             
+     8/98/998         Y          Don't know                                    
+     9/99/999         Z          Missing                                       
+
+DATASET VERSION                                                                
+---------------                                                                
+  The variable VERSION identifies the release version of these data; it        
+  will be updated with each revision of the data and can be used to confirm    
+
+INDONESIAN FAMILY LIFE SURVEY 4: CODEBOOK                                       
+--------------------------------------------------------------------------------
+ H O U S E H O L D    S U R V E Y    C O D E B O O K                 page 4
+--------------------------------------------------------------------------------
+ B O O K :       BK
+ T O P I C :     Control Book - Household Roster and Location
+
+--------------------------------------------------------------------------------
+  that you are using the most recent version of the data.                      
+
+NOTES ABOUT BOOK K                                                         
+------------------                                                         
+
+  The CONTROL BOOK was the first book completed when an IFLS household     
+  was found by an interviewer.  The book contains a household roster,      
+  information on the location of the household, characteristics of         
+  the housing structure as observed by the interviewer and information     
+  on schools attended by household members (which was used to draw         
+  the sample of schools in the Facility Survey).                           
+
+  Upon locating a member of a household found in a previous wave of IFLS,  
+  the interviewer used a pre-printed version of the household  roster      
+  from the last wave in which it was found as a starting                   
+  place to complete the roster for the IFLS4 household.                    
+  Every person listed in each prior IFLS wave is accounted for; a note     
+  is made for each person who has died and each person who has             
+  left the household.  Current location of any movers is obtained later    
+  in the interview.  All new entrants to the household are then            
+  listed in the IFLS4 roster.                                              
+
+  If the household is a split-off from the original household, the         
+  preprinted roster was not used.  Instead a new roster was started        
+  with each household member being treated as a new entrant.               
+  A respondent who moved out of an IFLS household and was located in       
+  a new household (or another IFLS household) will appear in the           
+  roster in two places: in the original roster as someone who moved        
+  out and as a resident in the roster of the household where he/she        
+  lives at the time of the survey.                                         
+
+  The respondent to this book is recorded in PID07 which is a              
+  unique person identifier within this household in IFLS4. It is           
+  the person's line number in the roster in BK_AR1. PID07 may              
+  ONLY be used to link records within IFLS4.                               
+
+  To link records across waves of the IFLS, use PIDLINK.  It is                 
+  a unique person identifier which is the same in IFLS1, 2, 2+, 3               
+  and 4 for a particular individual.  It may also be used to                    
+  link records within IFLS4, except that as is described in                     
+  Volume 2 of the User's Guide, a person if they moved                          
+  households since IFLS1 may be found in multiple households                    
+  with PIDLINK.  However there will be only 1 household in                      
+  which the respondent currently resides, which can be found by                 
+  examining variable ar01a in Book K, which is equal to 1 or 5 if               
+  the respondent is a resident.                                                 
+
+  PIDLINK is a string variable comprising 9 digits.  For a                      
+  respondent in IFLS1, 2, 2+, or 3. PIDLINK is made up of HHID for              
+  the wave in which they were first found, followed by 00 and                   
+  then the person identifier, PID, for that wave of IFLS.  For                  
+  a new respondent in IFLS4, PIDLINK is made up of HHID07 and                   
+  PID07.                                                                        
+
+INDONESIAN FAMILY LIFE SURVEY 4: CODEBOOK                                       
+--------------------------------------------------------------------------------
+ H O U S E H O L D    S U R V E Y    C O D E B O O K                 page 5
+--------------------------------------------------------------------------------
+ B O O K :       BK
+ T O P I C :     Control Book - Household Roster and Location
+
+--------------------------------------------------------------------------------
+
+  In IFLS4, HHID07 is a seven digit character variable whose digits carry       
+  the following meaning:                                                        
+
+                  x  x  x           x  x                    x  x                
+                  -------    ------------------        ---------------          
+                    EA       specific household        origin/split-off         
+
+  In the last two digits, 00 designates an origin household.  For a split-off   
+  household, the 6th digit is either 1, 2, 3 or 4 depending on which wave the   
+  split-off first appeared.  Split-offs from IFLS2 have their sixth digit equal 
+  to 1, while split-off households first appearing in IFLS2+ have a 2, new      
+  split-offs in 2000 have a 3, and new 2007 split-off have a 4.  The 7th digit  
+  indicates whether it is the first, second, or other split-off (some multiple  
+  split-offs occurred).                                                         
+
+  Note that the enumeration area identifier used to define a               
+  household contains no information about the current whereabouts          
+  of the household unless it has not moved.  The location of the           
+  household is recorded in BK_SC.                                          
+
+  AR01A is the variable that provides information about the residential   
+  status of each respondent.  If the respondent is a member of the        
+  household in IFLS4 and was a member in a prior wave, AR01A=1.           
+  If the respondent has died, AR01A=0. If the respondent has moved        
+  out of the household, AR01A=3.  All respondents who were not a member   
+  of a household interviewed in a prior wave of IFLS are assigned AR01A=5.
+
+  Attempts were made to locate IFLS household members who were not in the 
+  household at the time of the interview in IFLS4 (AR01A=3) and who were  
+  designated to be tracked (AR01B=1). Because of this, an IFLS respondent 
+  may appear in more than one roster.  However, no one should appear as   
+  present (AR01A=1) in more than one household.  See the user's guide for 
+  more detail.                                                            
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 6
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR0              Bk K Household size
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+HHID07             2007 Household ID
+
+
+MODULE             IFLS survey module
+
+                   BK_AR0                                      13,536    100.00
+                   total                                       13,536    100.00
+
+AR03               Is there any unlisted child?
+
+                   missing                                          1      0.01
+                   1. Yes                                       4,414     32.61
+                   3. No                                        9,120     67.38
+                   9. Missing                                       1      0.01
+                   total                                       13,536    100.00
+
+AR03A              Is there any listed child after 2000?
+
+                   missing                                          1      0.01
+                   1. Yes                                         287      2.12
+                   3. No                                       13,247     97.86
+                   9. Missing                                       1      0.01
+                   total                                       13,536    100.00
+
+AR04               Is there any unlisted person?
+
+                   missing                                          1      0.01
+                   1. Yes                                       1,509     11.15
+                   3. No                                       12,025     88.84
+                   9. Missing                                       1      0.01
+                   total                                       13,536    100.00
+
+AR05               Is any person away for <6 mnths?
+
+                   missing                                          1      0.01
+                   1. Yes                                          27      0.20
+                   3. No                                       13,507     99.79
+                   9. Missing                                       1      0.01
+                   total                                       13,536    100.00
+
+AR06               Is any person visiting for 6 months?
+
+                   missing                                          1      0.01
+                   1. Yes                                         492      3.63
+                   3. No                                       13,042     96.35
+                   9. Missing                                       1      0.01
+                   total                                       13,536    100.00
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 7
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR0              Bk K Household size
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+HHSIZE             Total HH's member
+
+                   min:                                          1.00
+                   mean:                                         5.39
+                   max:                                         39.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+VERSION            IFLS 4 release number
+
+                   min:                                          1.00
+                   mean:                                         1.00
+                   max:                                          1.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 8
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+HHID07             2007 Household ID
+
+
+PID07              2007 Person ID within household
+
+
+PIDLINK            2007 Person ID
+
+
+MODULE             IFLS survey module
+
+                   BK_AR1                                      73,016    100.00
+                   total                                       73,016    100.00
+
+AR00               Person Identification
+
+                   min:                                          1.00
+                   mean:                                         4.02
+                   max:                                         39.00
+                   #obs                                        73,016
+                   #miss:                                           0
+
+AR01A              Does HH member live in this household
+
+                   0.Dead                                       3,935      5.39
+                   1.Yes                                       28,668     39.26
+                   2.ART comeback                               6,391      8.75
+                   3.No                                        18,475     25.30
+                   5.New Household member                      15,441     21.15
+                   6.Duplicate                                     26      0.04
+                   11.entered after interview                      80      0.11
+                   total                                       73,016    100.00
+
+AR01B              Tracking Status
+
+                   missing                                      3,936      5.39
+                   1.Y1                                        35,328     48.38
+                   3.T                                         33,752     46.23
+                   total                                       73,016    100.00
+
+AR01C              Random VG
+
+                   missing                                     48,874     66.94
+                   AB                                             997      1.37
+                   AC                                             771      1.06
+                   AD                                             903      1.24
+                   AE                                             811      1.11
+                   AF                                             884      1.21
+                   BA                                             812      1.11
+                   BB                                               1      0.00
+                   BC                                             999      1.37
+                   BD                                           1,005      1.38
+                   BE                                             825      1.13
+                   BF                                             794      1.09
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 9
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(AR01C  continued)
+
+                   CA                                             596      0.82
+                   CB                                             822      1.13
+                   CD                                             901      1.23
+                   CE                                           1,038      1.42
+                   CF                                             679      0.93
+                   DA                                             964      1.32
+                   DB                                             709      0.97
+                   DC                                             987      1.35
+                   DE                                             718      0.98
+                   DF                                             882      1.21
+                   EA                                             696      0.95
+                   EB                                             521      0.71
+                   EC                                             789      1.08
+                   ED                                             582      0.80
+                   EF                                             772      1.06
+                   ES                                               1      0.00
+                   FA                                             631      0.86
+                   FB                                             743      1.02
+                   FC                                             714      0.98
+                   FD                                             851      1.17
+                   FE                                             744      1.02
+                   total                                       73,016    100.00
+
+AR01D              Random CO
+
+                   missing                                      3,936      5.39
+                   A                                           19,867     27.21
+                   B                                           18,145     24.85
+                   C                                           16,635     22.78
+                   D                                           14,408     19.73
+                   E                                               23      0.03
+                   F                                                2      0.00
+                   total                                       73,016    100.00
+
+AR01E              Random DBS
+
+                   missing                                      3,936      5.39
+                   1. Yes                                      33,556     45.96
+                   3. No                                       35,524     48.65
+                   total                                       73,016    100.00
+
+AR01F              Still in HH in latest SAKERTI?
+
+                   missing                                     21,260     29.12
+                   0. Dead                                      1,427      1.95
+                   1. Yes                                      30,965     42.41
+                   3. No                                        4,164      5.70
+                   4. Interviwed in other HH                    5,173      7.08
+                   5. New Household member                     10,027     13.73
+                   total                                       73,016    100.00
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 10
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+AR01G              Status to Book III in IFLS-00
+
+                   missing                                      3,936      5.39
+                   1. Yes                                      29,471     40.36
+                   3. No                                       39,609     54.25
+                   total                                       73,016    100.00
+
+AR01H              Status to Book IV in IFLS-00
+
+                   missing                                      3,936      5.39
+                   1. Yes                                       9,752     13.36
+                   3. No                                       59,328     81.25
+                   total                                       73,016    100.00
+
+AR01I              Status of interview
+
+                   missing                                      3,936      5.39
+                   1. Yes                                      61,462     84.18
+                   3. No                                        7,618     10.43
+                   total                                       73,016    100.00
+
+AR01L              Status to Book EK1 in IFLS-00
+
+                   missing                                      3,936      5.39
+                   1. Yes                                       7,524     10.30
+                   3. No                                       61,556     84.30
+                   total                                       73,016    100.00
+
+AR01M              Status to Book EK2 in IFLS-00
+
+                   missing                                      3,936      5.39
+                   1. Yes                                      11,092     15.19
+                   3. No                                       57,988     79.42
+                   total                                       73,016    100.00
+
+AR02               Relation to HH Head in last interview
+
+                   missing                                     25,088     34.36
+                   1.Head of the household                      8,560     11.72
+                   2.Husband/wife                               7,344     10.06
+                   3.Children (biological                      20,811     28.50
+                   4.Children (step/adopted)                      559      0.77
+                   5.Sons/daughters-in-law                      1,818      2.49
+                   6.Parents                                      456      0.62
+                   7.Father/mother-in-law                         468      0.64
+                   8.Siblings                                     740      1.01
+                   9.Brother/sister-in-law                        905      1.24
+                   10.Grandchild                                3,562      4.88
+                   11.Grandparents                                 46      0.06
+                   12.Uncles/aunts                                 73      0.10
+                   13.Nephews/nieces                            1,208      1.65
+                   14.Cousins                                     154      0.21
+                   15.Servants                                    427      0.58
+                   16.Relative                                     54      0.07
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 11
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(AR02  continued)
+
+                   17.Non-relative                                255      0.35
+                   18.Tenant                                      164      0.22
+                   19.Friend                                      192      0.26
+                   21.Ex spouse                                    77      0.11
+                   99.Missing                                      55      0.08
+                   total                                       73,016    100.00
+
+AR02B              Relation to HH Head (2000)
+
+                   missing                                      3,936      5.39
+                   1.Head of the household                     13,529     18.53
+                   2.Husband/wife                              10,192     13.96
+                   3.Children (biological                      27,193     37.24
+                   4.Children (step/adopted)                      810      1.11
+                   5.Sons/daughters-in-law                      2,290      3.14
+                   6.Parents                                    1,198      1.64
+                   7.Father/mother-in-law                       1,121      1.54
+                   8.Siblings                                   1,691      2.32
+                   9.Brother/sister-in-law                      1,796      2.46
+                   10.Grandchild                                4,411      6.04
+                   11.Grandparents                                114      0.16
+                   12.Uncles/aunts                                213      0.29
+                   13.Nephews/nieces                            1,900      2.60
+                   14.Cousins                                     264      0.36
+                   15.Servants                                    425      0.58
+                   16.Relative                                    546      0.75
+                   17.Non-relative                              1,289      1.77
+                   21.Ex spouse                                    97      0.13
+                   99.Missing                                       1      0.00
+                   total                                       73,016    100.00
+
+AR07X              Sex
+
+                   missing                                      3,936      5.39
+                   4. Same with preprinted                     47,870     65.56
+                   5. Change                                   21,210     29.05
+                   total                                       73,016    100.00
+
+AR07               Sex
+
+                   missing                                      3,936      5.39
+                   1.male                                      33,928     46.47
+                   3.female                                    35,152     48.14
+                   total                                       73,016    100.00
+
+AR08A              Age in the last interviewed
+
+                   min:                                          0.00
+                   mean:                                        26.93
+                   max:                                        998.00
+                   #obs                                        47,928
+                   #miss:                                      25,088
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 12
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+AR08DAY            Date of birth of HH member
+
+                   min:                                          1.00
+                   mean:                                        19.63
+                   max:                                         99.00
+                   #obs                                        69,080
+                   #miss:                                       3,936
+
+AR08X              Date of birth of HH member
+
+                   missing                                      3,936      5.39
+                   1. Preprinted                               40,738     55.79
+                   5. New                                      28,342     38.82
+                   total                                       73,016    100.00
+
+AR08MTH            Month of birth of HH member
+
+                   missing                                      3,936      5.39
+                   1.Jan                                        4,074      5.58
+                   2.Feb                                        3,896      5.34
+                   3.Mar                                        4,594      6.29
+                   4.Apr                                        4,922      6.74
+                   5.May                                        5,720      7.83
+                   6.Jun                                        5,368      7.35
+                   7.Jul                                        7,707     10.56
+                   8.Aug                                        5,580      7.64
+                   9.Sep                                        8,869     12.15
+                   10.Oct                                       4,701      6.44
+                   11.Nov                                       4,187      5.73
+                   12.Dec                                       5,574      7.63
+                   98.Don't know                                3,854      5.28
+                   99.Missing                                      34      0.05
+                   total                                       73,016    100.00
+
+AR08YR             Year of birth of HH member
+
+                   min:                                       1899.00
+                   mean:                                      2060.90
+                   max:                                       9999.00
+                   #obs                                        69,080
+                   #miss:                                       3,936
+
+AR09               Age now
+
+                   min:                                          0.00
+                   mean:                                        31.29
+                   max:                                        999.00
+                   #obs                                        69,080
+                   #miss:                                       3,936
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 13
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+AR10               ID number of father
+
+                   min:                                          1.00
+                   mean:                                        30.44
+                   max:                                         99.00
+                   #obs                                        69,080
+                   #miss:                                       3,936
+
+AR11               ID number of mother
+
+                   min:                                          1.00
+                   mean:                                        27.43
+                   max:                                         99.00
+                   #obs                                        69,080
+                   #miss:                                       3,936
+
+AR12               ID number of HHM that care for children
+
+                   min:                                          1.00
+                   mean:                                        74.46
+                   max:                                         99.00
+                   #obs                                        69,080
+                   #miss:                                       3,936
+
+AR13               Marital status
+
+                   missing                                      3,936      5.39
+                   1. Unmarried                                28,751     39.38
+                   2. Married                                  35,539     48.67
+                   3. Separated, estranged                        305      0.42
+                   4. Divorced                                  1,176      1.61
+                   5. Widow, widower                            3,179      4.35
+                   8. Don't know                                  116      0.16
+                   9. Missing                                      14      0.02
+                   total                                       73,016    100.00
+
+AR14               Line number of spouse
+
+                   min:                                          1.00
+                   mean:                                        15.25
+                   max:                                         99.00
+                   #obs                                        35,539
+                   #miss:                                      37,477
+
+AR15               Religion of HH member
+
+                   missing                                      3,936      5.39
+                   1. Islam                                    61,341     84.01
+                   2. Protestant                                3,200      4.38
+                   3. Catholic                                  1,196      1.64
+                   4. Hinduism                                  2,959      4.05
+                   5. Buddhism                                    289      0.40
+                   7. Konghucu                                      8      0.01
+                   95. Other, specify                              67      0.09
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 14
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(AR15  continued)
+
+                   99. Missing                                     20      0.03
+                   total                                       73,016    100.00
+
+AR15A              Did member work last year?
+
+                   missing                                      3,936      5.39
+                   1. Yes                                      35,117     48.09
+                   3. No                                       28,265     38.71
+                   6. < 5 Year                                  5,464      7.48
+                   8. DK                                          224      0.31
+                   9. Missing                                      10      0.01
+                   total                                       73,016    100.00
+
+AR15BX             Do you know last yr's member's salary?
+
+                   missing                                     37,889     51.89
+                   1. Given                                    23,735     32.51
+                   6. Labor of family                           3,834      5.25
+                   8. Don't know                                7,534     10.32
+                   9. Missing                                      24      0.03
+                   total                                       73,016    100.00
+
+AR15B              last year's salary
+
+                   min:                                          0.00
+                   mean:                                   10455969.0
+                   max:                                     999999999
+                   #obs                                        23,735
+                   #miss:                                      49,281
+
+AR15C              Type of activity during in the past week
+
+                   missing                                      9,400     12.87
+                   1. Work/helping to get income               31,652     43.35
+                   2. Looking for work                            425      0.58
+                   3. Student                                  12,764     17.48
+                   4. Housekeeper                              11,258     15.42
+                   5. Retired                                   1,688      2.31
+                   6. Unemployment                              4,642      6.36
+                   7. Sick                                        356      0.49
+                   95. Other, specify                              32      0.04
+                   98. Don't know                                 782      1.07
+                   99. Missing                                     17      0.02
+                   total                                       73,016    100.00
+
+AR15D              Ethnic Group
+
+                   missing                                      3,936      5.39
+                   1. Javanese                                 27,895     38.20
+                   2. Sundanese                                 8,637     11.83
+                   3. Balinese                                  2,866      3.93
+                   4. Batak                                     3,155      4.32
+                   5. Bugis                                     2,784      3.81
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 15
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(AR15D  continued)
+
+                   6. Chinese                                     645      0.88
+                   7. Maduranese                                1,987      2.72
+                   8. Sasak                                     2,736      3.75
+                   9. Minang                                    3,169      4.34
+                   10. Banjar                                   2,372      3.25
+                   11. Bima-Dompu                               1,307      1.79
+                   12. Makassar                                 1,016      1.39
+                   13. Nias                                       284      0.39
+                   14. Palembang                                  379      0.52
+                   15. Sumbawa                                    310      0.42
+                   16. Toraja                                     566      0.78
+                   17. Betawi                                   2,537      3.47
+                   18. Dayak                                       62      0.08
+                   19. Melayu                                     643      0.88
+                   20. Komering                                    92      0.13
+                   21. Ambon                                       32      0.04
+                   22. Manado                                      24      0.03
+                   23. Aceh                                        76      0.10
+                   25. SumbagSel lain                           2,688      3.68
+                   26. Banten                                     236      0.32
+                   27. Cirebon                                  1,480      2.03
+                   28. Gorontalo                                    3      0.00
+                   95. Other, specify                           1,046      1.43
+                   99. Missing                                     53      0.07
+                   total                                       73,016    100.00
+
+AR16               HHM highest level of education
+
+                   missing                                      3,936      5.39
+                   1. Unschooled                                9,825     13.46
+                   2. Grade school                             23,368     32.00
+                   3. General jr. high                          8,984     12.30
+                   4. Vocational jr. high                         543      0.74
+                   5. General sr. high (SLA)                    8,268     11.32
+                   6. Vocational sr. high (SMK)                 5,764      7.89
+                   11. Education A                                 28      0.04
+                   12. Education B                                 70      0.10
+                   13. Open University                             26      0.04
+                   14. Moslem School (Pesantren)                  256      0.35
+                   15. Education C                                 82      0.11
+                   17. School for the disabled                     26      0.04
+                   60. Diploma (D1,D2,D3)                       2,024      2.77
+                   61. University S1                            3,782      5.18
+                   62. University S2                              189      0.26
+                   63. University S3                               10      0.01
+                   72. Madrasah Ibtidaiyah                      1,193      1.63
+                   73. Madrasah Tsanawiyah                      2,074      2.84
+                   74. Madrasah Aliyah                          1,166      1.60
+                   90. Kindergarten                               517      0.71
+                   95. Other, specify                              10      0.01
+                   98. Don't know                                 857      1.17
+                   99. Missing                                     18      0.02
+                   total                                       73,016    100.00
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 16
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+
+AR17               Highest grade completed by HHM
+
+                   min:                                          0.00
+                   mean:                                        19.85
+                   max:                                         99.00
+                   #obs                                        69,080
+                   #miss:                                       3,936
+
+AR18C              Is HHM still in school?
+
+                   missing                                     49,855     68.28
+                   1. Yes                                      10,156     13.91
+                   3. No                                        6,015      8.24
+                   6. Not yet in school/Not Applicable          6,990      9.57
+                   total                                       73,016    100.00
+
+AR18D              Interviewer check: still live in HH
+
+                   missing                                     12,497     17.12
+                   0.Dead                                       3,916      5.36
+                   1.Yes                                       28,651     39.24
+                   2.ART comeback                               1,263      1.73
+                   3.No                                        18,494     25.33
+                   5.New Household member                       8,115     11.11
+                   11.entered after interview                      80      0.11
+                   total                                       73,016    100.00
+
+AR18EX             When did indvidual entry/depart the HH?
+
+                   missing                                     41,148     56.35
+                   1.given                                     30,682     42.02
+                   8.don't know                                 1,152      1.58
+                   9.missing                                       34      0.05
+                   total                                       73,016    100.00
+
+AR18EMTH           Departure/entry into HH (Month)
+
+                   missing                                     42,334     57.98
+                   1.Jan                                        1,452      1.99
+                   2.Feb                                        1,170      1.60
+                   3.Mar                                        1,051      1.44
+                   4.Apr                                        1,117      1.53
+                   5.May                                        1,132      1.55
+                   6.Jun                                        1,370      1.88
+                   7.Jul                                        1,306      1.79
+                   8.Aug                                        1,360      1.86
+                   9.Sep                                        1,060      1.45
+                   10.Oct                                       1,253      1.72
+                   11.Nov                                       1,131      1.55
+                   12.Dec                                       1,323      1.81
+                   98.Don't know                               15,954     21.85
+                   99.Missing                                       3      0.00
+                   total                                       73,016    100.00
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 17
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+
+AR18EYR            Departure/Entry into HH (Year)
+
+                   min:                                       1945.00
+                   mean:                                      2023.12
+                   max:                                       9999.00
+                   #obs                                        30,682
+                   #miss:                                      42,334
+
+AR18F              Reason for move in / out
+
+                   missing                                     41,148     56.35
+                   1. To work/look for work                     4,400      6.03
+                   2. For school                                1,114      1.53
+                   3. Followed spouse/parent                    6,250      8.56
+                   4. Marriage                                  4,690      6.42
+                   5. Divorce                                     519      0.71
+                   6. Death                                     3,870      5.30
+                   7. Birth                                     4,637      6.35
+                   8. Help family                                 475      0.65
+                   9. Need place to stay                        2,191      3.00
+                   11. Wants to be independent                  1,802      2.47
+                   12. Quit job                                   337      0.46
+                   13. Fired                                       28      0.04
+                   14. Retired                                     12      0.02
+                   15. Finish school                              255      0.35
+                   95. Other, specify                           1,037      1.42
+                   98. Don't know                                 201      0.28
+                   99. Missing                                     50      0.07
+                   total                                       73,016    100.00
+
+AR18G              Ivwr chk: Still in HH
+
+                   missing                                     41,148     56.35
+                   0.Dead                                       3,916      5.36
+                   2.ART comeback                               1,263      1.73
+                   3.No                                        18,494     25.33
+                   5.New Household member                       8,115     11.11
+                   11.entered after interview                      80      0.11
+                   total                                       73,016    100.00
+
+AR18H              Is HH member still alive?
+
+                   missing                                     54,522     74.67
+                   1. Yes                                      18,412     25.22
+                   3. No                                           12      0.02
+                   8. Don't Know                                   60      0.08
+                   9. Missing                                      10      0.01
+                   total                                       73,016    100.00
+
+AR18I              Where does HHM live now?
+
+                   missing                                     54,544     74.70
+                   1. In the same village                       5,924      8.11
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 18
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(AR18I  continued)
+
+                   2. In the same subdistrict                   1,418      1.94
+                   3. In the same district                      2,231      3.06
+                   4. In the same province                      3,399      4.66
+                   10. Sumatra                                     17      0.02
+                   11. Aceh                                        45      0.06
+                   12. North Sumatra                              103      0.14
+                   13. West Sumatra                                78      0.11
+                   14. Riau                                       318      0.44
+                   15. Jambi                                       76      0.10
+                   16. South Sumatra                              102      0.14
+                   17. Bengkulu                                    43      0.06
+                   18. Lampung                                     80      0.11
+                   19. Bangka Belitung                             26      0.04
+                   20. Kepulauan Riau                              82      0.11
+                   30                                               3      0.00
+                   31. Jakarta                                  1,036      1.42
+                   32. West Java                                  624      0.85
+                   33. Central Java                               349      0.48
+                   34. D.I. Yogyakarta                            117      0.16
+                   35. East Java                                  271      0.37
+                   36. Banten                                     245      0.34
+                   51. Bali                                        97      0.13
+                   52. West Nusa Tenggara                          23      0.03
+                   53. East Nusa Tenggara                          15      0.02
+                   60. Kalimantan                                  20      0.03
+                   61. West Kalimantan                             23      0.03
+                   62. Central Kalimantan                          50      0.07
+                   63. South Kalimantan                            30      0.04
+                   64. East Kalimantan                            151      0.21
+                   70. Sulawesi                                     7      0.01
+                   71. North Sulawesi                              13      0.02
+                   72. Central Sulawesi                            40      0.05
+                   73. South Sulawesi                              37      0.05
+                   74. South East Sulawesi                         64      0.09
+                   75. Gorontalo                                    1      0.00
+                   76. West Sulawesi                               22      0.03
+                   81. Maluku                                      16      0.02
+                   82. Maluku Utara                                 1      0.00
+                   90                                              22      0.03
+                   91. Irian Jaya Barat                            12      0.02
+                   94. Papua                                       29      0.04
+                   101. Malaysia                                  377      0.52
+                   102. Singapore                                  35      0.05
+                   103. Brunei Darussalam                          12      0.02
+                   104. Hongkong                                   23      0.03
+                   105. Japan                                       7      0.01
+                   106. South Korea                                16      0.02
+                   107. Taiwan                                     35      0.05
+                   122. Saudi Arabia                              216      0.30
+                   123. Kuwait                                     15      0.02
+                   124. UAE                                        15      0.02
+                   132. USA                                         9      0.01
+                   141. Australia                                   6      0.01
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 19
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_AR1              Bk K Household roster
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(AR18I  continued)
+
+                   151. Holland                                     2      0.00
+                   152. UK                                          1      0.00
+                   995. Others                                     80      0.11
+                   998. Don't know                                362      0.50
+                   999. Missing                                     1      0.00
+                   total                                       73,016    100.00
+
+AR18X              Panel respondent or new respondent?
+
+                   missing                                          2      0.00
+                   1. New                                      12,494     17.11
+                   2. HHM born in this HH in 2000 or after         37      0.05
+                   3. Panel                                    60,483     82.84
+                   total                                       73,016    100.00
+
+AR18J              Need to enter or tracking form
+
+                   missing                                     57,620     78.91
+                   1. Yes                                       7,324     10.03
+                   3. No                                        8,072     11.06
+                   total                                       73,016    100.00
+
+HHID07_9           Identification
+
+
+PID                Personal Identification
+
+                   min:                                          1.00
+                   mean:                                         4.02
+                   max:                                         39.00
+                   #obs                                        73,016
+                   #miss:                                           0
+
+VERSION            IFLS 4 release number
+
+                   min:                                          1.00
+                   mean:                                         1.00
+                   max:                                          1.00
+                   #obs                                        73,016
+                   #miss:                                           0
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 20
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+HHID07             2007 Household ID
+
+
+PID07              2007 Person ID within household
+
+
+MODULE             IFLS survey module
+
+                   BK_COV                                      13,536    100.00
+                   total                                       13,536    100.00
+
+BEGHR1             Time interview began (minute)(1)
+
+                   min:                                          0.00
+                   mean:                                        12.89
+                   max:                                         45.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+BEGHR2             Time interview began (minute)(2)
+
+                   min:                                          0.00
+                   mean:                                        13.35
+                   max:                                         30.00
+                   #obs                                           254
+                   #miss:                                      13,282
+
+BEGHR3             Time interview began (minute)(3)
+
+                   min:                                          5.00
+                   mean:                                        14.65
+                   max:                                         22.00
+                   #obs                                            17
+                   #miss:                                      13,519
+
+BEGMIN1            Time interview ended (hour)(1)
+
+                   min:                                          0.00
+                   mean:                                        21.52
+                   max:                                         59.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+BEGMIN2            Time interview ended (hour)(2)
+
+                   min:                                          0.00
+                   mean:                                        23.28
+                   max:                                         59.00
+                   #obs                                           254
+                   #miss:                                      13,282
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 21
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+BEGMIN3            Time interview ended (hour)(3)
+
+                   min:                                          0.00
+                   mean:                                        21.76
+                   max:                                         59.00
+                   #obs                                            17
+                   #miss:                                      13,519
+
+CP1                Were others present at interview?
+
+                   Variable CP1 can have multiple responses.  Users were asked to select 
+                   all applicable responses from a list of all possible responses.  These were  
+                   concatenated together into a single character string variable which appears  
+                   in this public use file.  For example, if the interviewee selected responses 
+                   A, C, and F from the list, CP1 will have the value ACF.  If the       
+                   interviewee selected D and E, CP1 will have the value DE.  Use the key
+                   below to correctly interpret these values.                                   
+
+
+                   key for variable: CP1       A =  No one                                         
+                                               B =  Children 5 or older                            
+                                               C =  Children under 5                               
+                                               D =  Spouse                                         
+                                               E =  Other HH members                               
+                                               F =  Other non-HH members                           
+
+
+CP2                Evaluation of accuracy of R's answers
+
+                   missing                                          1      0.01
+                   Excellent                                    2,326     17.18
+                   Good                                        10,142     74.93
+                   Fair                                         1,011      7.47
+                   Not so good                                     39      0.29
+                   Very bad                                         9      0.07
+                   Missing                                          8      0.06
+                   total                                       13,536    100.00
+
+CP3                How serious and attentive was R?
+
+                   missing                                          1      0.01
+                   Excellent                                    2,581     19.07
+                   Good                                         9,995     73.84
+                   Fair                                           900      6.65
+                   Not so good                                     40      0.30
+                   Very bad                                        11      0.08
+                   Missing                                          8      0.06
+                   total                                       13,536    100.00
+
+EDITOR             Field editor ID code
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 22
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+EDIT_CK            Reviewed by editor
+
+                   1. Data entered, no corrections necessar     1,108      8.19
+                   2. Data entered and corrected               12,014     88.76
+                   3. Data entered but not corrected, expla       414      3.06
+                   total                                       13,536    100.00
+
+ENDHR1             Time interview ended (minute)(1)
+
+                   min:                                          0.00
+                   mean:                                        13.27
+                   max:                                         58.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+ENDHR3             Time interview ended (minute)(3)
+
+                   min:                                          6.00
+                   mean:                                        14.88
+                   max:                                         22.00
+                   #obs                                            17
+                   #miss:                                      13,519
+
+ENDMIN1            Time interview began (hour)(1)
+
+                   min:                                          0.00
+                   mean:                                        30.57
+                   max:                                         59.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+ENDMIN2            Time interview began (hour)(2)
+
+                   min:                                          0.00
+                   mean:                                        26.57
+                   max:                                         59.00
+                   #obs                                           254
+                   #miss:                                      13,282
+
+ENDMIN3            Time interview began (hour)(3)
+
+                   min:                                          6.00
+                   mean:                                        29.06
+                   max:                                         58.00
+                   #obs                                            17
+                   #miss:                                      13,519
+
+HHID07_9           Identification
+
+
+IDIVWR             Interviewer ID code
+
+
+IDKEY              Keypuncher code
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 23
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+
+
+IDVERIF            Verification keypuncher code
+
+
+IVWDAY1            Date of interview (day)(1)
+
+                   min:                                          1.00
+                   mean:                                        15.73
+                   max:                                         31.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+IVWDAY2            Date of interview (day)(2)
+
+                   min:                                          1.00
+                   mean:                                        16.94
+                   max:                                         31.00
+                   #obs                                           254
+                   #miss:                                      13,282
+
+IVWDAY3            Date of interview (day)(3)
+
+                   min:                                          1.00
+                   mean:                                        12.47
+                   max:                                         30.00
+                   #obs                                            17
+                   #miss:                                      13,519
+
+IVWMTH1            Date of interview (month)(1)
+
+                   1.Jan                                        2,624     19.39
+                   2.Feb                                        2,298     16.98
+                   3.Mar                                        2,268     16.76
+                   4.Apr                                        1,991     14.71
+                   5.May                                        1,729     12.77
+                   6.Jun                                          558      4.12
+                   7.Jul                                           93      0.69
+                   10.Oct                                           1      0.01
+                   11.Nov                                         309      2.28
+                   12.Dec                                       1,665     12.30
+                   total                                       13,536    100.00
+
+IVWMTH2            Date of interview (month)(2)
+
+                   missing                                     13,282     98.12
+                   1.Jan                                           29      0.21
+                   2.Feb                                           33      0.24
+                   3.Mar                                           22      0.16
+                   4.Apr                                           37      0.27
+                   5.May                                           51      0.38
+                   6.Jun                                           35      0.26
+                   7.Jul                                            9      0.07
+                   11.Nov                                           6      0.04
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 24
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(IVWMTH2  continued)
+
+                   12.Dec                                          32      0.24
+                   total                                       13,536    100.00
+
+IVWMTH3            Date of interview (month)(3)
+
+                   missing                                     13,519     99.87
+                   1.Jan                                            3      0.02
+                   2.Feb                                            3      0.02
+                   3.Mar                                            2      0.01
+                   4.Apr                                            1      0.01
+                   5.May                                            3      0.02
+                   6.Jun                                            2      0.01
+                   7.Jul                                            1      0.01
+                   12.Dec                                           2      0.01
+                   total                                       13,536    100.00
+
+IVWYR1             Date of interview(year)(1)
+
+                   min:                                          7.00
+                   mean:                                         7.85
+                   max:                                          8.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+IVWYR2             Date of interview(year)(2)
+
+                   min:                                          7.00
+                   mean:                                         7.85
+                   max:                                          8.00
+                   #obs                                           254
+                   #miss:                                      13,282
+
+IVWYR3             Date of interview(year)(3)
+
+                   min:                                          7.00
+                   mean:                                         7.88
+                   max:                                          8.00
+                   #obs                                            17
+                   #miss:                                      13,519
+
+LANGMAIN           Interview in what language?
+
+                   0. Indonesian                                8,674     64.08
+                   1. Javanese                                  2,367     17.49
+                   2. Sundanese                                   326      2.41
+                   3. Balinese                                     60      0.44
+                   4. Batak                                        41      0.30
+                   5. Bugis                                        46      0.34
+                   6. Chinese                                       1      0.01
+                   7. Maduranese                                  214      1.58
+                   8. Sasak                                       412      3.04
+                   9. Minang                                      337      2.49
+                   10. Banjar                                     490      3.62
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 25
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+(LANGMAIN  continued)
+
+                   12. Makasar                                      2      0.01
+                   13. Nias                                         7      0.05
+                   14. Palembang                                  422      3.12
+                   17. Lahat                                       24      0.18
+                   18. Other South Sumatra                        111      0.82
+                   95. Other                                        1      0.01
+                   99. Missing                                      1      0.01
+                   total                                       13,536    100.00
+
+LANGOTHR           Other language used if any
+
+                   0. Indonesian                                2,881     21.28
+                   1. Javanese                                  1,155      8.53
+                   2. Sundanese                                   198      1.46
+                   3. Balinese                                     38      0.28
+                   4. Batak                                        20      0.15
+                   5. Bugis                                        41      0.30
+                   6. Chinese                                       3      0.02
+                   7. Maduranese                                   39      0.29
+                   8. Sasak                                        68      0.50
+                   9. Minang                                       53      0.39
+                   10. Banjar                                      96      0.71
+                   11. Bima                                         3      0.02
+                   12. Makasar                                     13      0.10
+                   13. Nias                                         7      0.05
+                   14. Palembang                                  159      1.17
+                   15. Sumbawa                                     11      0.08
+                   16. Toraja                                       8      0.06
+                   17. Lahat                                        9      0.07
+                   18. Other South Sumatra                         53      0.39
+                   19. Betawi                                       9      0.07
+                   95. Other                                       22      0.16
+                   96. No other                                 8,650     63.90
+                   total                                       13,536    100.00
+
+NUMVIS             Number of visits
+
+                   min:                                          1.00
+                   mean:                                         1.02
+                   max:                                          3.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+R1BK               Total number of tracking from FP10
+
+                   min:                                          0.00
+                   mean:                                         0.55
+                   max:                                         99.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 26
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+R2BK               Final result of interview
+
+                   1. Completed of all Book K - 5              12,598     93.07
+                   2. Completed some of Book K - 5                540      3.99
+                   3. Completed just for Book K                   356      2.63
+                   4. Only book K, explain_________                42      0.31
+                   total                                       13,536    100.00
+
+REASON             Reason of C1
+
+                   missing                                     13,532     99.97
+                   3. Resp. refused                                 3      0.02
+                   5. Other                                         1      0.01
+                   total                                       13,536    100.00
+
+RESULT             Interview of book I
+
+                   1. Completed                                13,532     99.97
+                   2. Partially completed                           4      0.03
+                   total                                       13,536    100.00
+
+RSPNDNT            Respondent HHM type
+
+                   1. Head of household                         9,043     66.81
+                   2. Spouse of head of household               3,485     25.75
+                   3. Other household member                      933      6.89
+                   4. Non-household member                         75      0.55
+                   total                                       13,536    100.00
+
+SUP_EDIT           Reviewed by Local Supervisor
+
+                   1. Yes                                         660      4.88
+                   3. No                                       12,873     95.10
+                   9. Missing                                       3      0.02
+                   total                                       13,536    100.00
+
+SUP_OBS            Observed by Local Supervisor
+
+                   1. Yes                                         747      5.52
+                   3. No                                       12,786     94.46
+                   9. Missing                                       3      0.02
+                   total                                       13,536    100.00
+
+SUP_VERI           Verivied by Local Supervisor
+
+                   1. Yes                                         250      1.85
+                   3. No                                       13,283     98.13
+                   9. Missing                                       3      0.02
+                   total                                       13,536    100.00
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 27
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_COV              Bk K Cover (Control Book)
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+VERSION            IFLS 4 release number
+
+                   min:                                          1.00
+                   mean:                                         1.00
+                   max:                                          1.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 28
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_KRK              Bk K Household characteristics
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+HHID07             2007 Household ID
+
+
+MODULE             IFLS survey module
+
+                   BK_KRK                                      13,535    100.00
+                   total                                       13,535    100.00
+
+KRK01              Ivwr Obs: Type of dwelling
+
+                   1. Single unit single level                  9,962     73.60
+                   2. Single unit multilevel                    1,225      9.05
+                   3. Duplex single level                         664      4.91
+                   4. Duplex multiple levels                      147      1.09
+                   5. Multiple unit single level                  636      4.70
+                   6. Multiple unit multiple levels               241      1.78
+                   8. House on stilts                             616      4.55
+                   9. High rise/apartement buildings               14      0.10
+                   10. House store unit                            13      0.10
+                   95. Other                                        9      0.07
+                   99. Missing                                      8      0.06
+                   total                                       13,535    100.00
+
+KRK02A             Inwr Obs: Human/animal waste near House
+
+                   1. Yes                                         900      6.65
+                   2. No                                       12,626     93.28
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK02B             Ivwr Obs: Piles of trash around House
+
+                   1. Yes                                       1,343      9.92
+                   2. No                                       12,183     90.01
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK02C             Ivwr Obs: House in stagnant water
+
+                   1. Yes                                       1,667     12.32
+                   2. No                                       11,859     87.62
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK02D             Ivwr Obs: House is next/under a stable
+
+                   1. Yes                                       3,028     22.37
+                   2. No                                       10,497     77.55
+                   9. Missing                                      10      0.07
+                   total                                       13,535    100.00
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 29
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_KRK              Bk K Household characteristics
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+KRK02E             Ivwr Obs: House has ventilation
+
+                   1. Yes                                      11,280     83.34
+                   2. No                                        2,246     16.59
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK02F             Ivwr Obs: House yard well kept
+
+                   1. Yes                                       9,759     72.10
+                   2. No                                        3,767     27.83
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK02G             Ivwr Obs: House has medium-sized yard
+
+                   1. Yes                                       8,551     63.18
+                   2. No                                        4,975     36.76
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK02H             Ivwr Obs: House has a kitchen outside
+
+                   1. Yes                                       4,124     30.47
+                   2. No                                        9,402     69.46
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK02I             Ivwr Obs: Cooking/sleeping rooms same
+
+                   1. Yes                                         839      6.20
+                   2. No                                       12,687     93.73
+                   9. Missing                                       9      0.07
+                   total                                       13,535    100.00
+
+KRK05A             House size in square meters
+
+                   min:                                          0.00
+                   mean:                                        91.70
+                   max:                                       9999.00
+                   #obs                                        13,535
+                   #miss:                                           0
+
+KRK06              Ivwr Obs: Number of rooms in House
+
+                   min:                                          1.00
+                   mean:                                         5.46
+                   max:                                         99.00
+                   #obs                                        13,535
+                   #miss:                                           0
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 30
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_KRK              Bk K Household characteristics
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+KRK08              Ivwr Obs: Main material of floor
+
+                   1. Ceramic/marble/granite/stone              4,812     35.55
+                   2. Tiles/terrazo                             2,228     16.46
+                   3. Cement/bricks                             3,857     28.50
+                   4. Lumber/board                              1,561     11.53
+                   5. Bamboo                                       68      0.50
+                   6. Dirt                                        989      7.31
+                   95. Other, specify                              15      0.11
+                   99. Missing                                      5      0.04
+                   total                                       13,535    100.00
+
+KRK09              Ivwr Obs: material used in outer walls
+
+                   1. Masonry (cement/prefabricated bricks)     9,931     73.37
+                   2. Lumber/board/plywood                      2,730     20.17
+                   3. Bamboo/Woven/Mat                            799      5.90
+                   95. Other, specify                              71      0.52
+                   99                                               4      0.03
+                   total                                       13,535    100.00
+
+KRK10              Ivwr Obs: materials for roof
+
+                   1. Concrete                                    140      1.03
+                   2. Wood                                        146      1.08
+                   3. Metal plates                              3,187     23.55
+                   4. Roof tiles/Shingles                       9,002     66.51
+                   5. Asbestos                                    787      5.81
+                   6. Foliage/palm leaves/grass/bamboo            240      1.77
+                   95. Other, specify                              26      0.19
+                   99. Missing                                      7      0.05
+                   total                                       13,535    100.00
+
+VERSION            IFLS 4 release number
+
+                   min:                                          1.00
+                   mean:                                         1.00
+                   max:                                          1.00
+                   #obs                                        13,535
+                   #miss:                                           0
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 31
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_SC               Bk K Location and sampling
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+HHID07             2007 Household ID
+
+
+MODULE             IFLS survey module
+
+                   BK_SC                                       13,536    100.00
+                   total                                       13,536    100.00
+
+HHID07_9           Identification
+
+
+SC010700           Prov 2007 in 2000 BPS code
+
+                   min:                                         11.00
+                   mean:                                        34.64
+                   max:                                         73.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+SC010707           Prov 2007 in 2007 BPS code
+
+                   11.N. Aceh Darussalam                            1      0.01
+                   12.North Sumatera                              911      6.73
+                   13.West Sumatera                               627      4.63
+                   14.Riau                                        100      0.74
+                   16.South Sumatera                              579      4.28
+                   18.Lampung                                     521      3.85
+                   19.Bangka Belitung                              73      0.54
+                   21                                              33      0.24
+                   31.Jakarta                                     994      7.34
+                   32.West Java                                 2,162     15.97
+                   33.Central Java                              1,616     11.94
+                   34.DI Yogyakarta                               714      5.27
+                   35.East Java                                 1,934     14.29
+                   36.Banten                                      485      3.58
+                   51.Bali                                        635      4.69
+                   52.West Nusa Tenggara                          837      6.18
+                   61.West Kalimantan                               1      0.01
+                   62.Central Kalimantan                           12      0.09
+                   63.South Kalimantan                            619      4.57
+                   64.East Kalimantan                              33      0.24
+                   71.North Sulawesi                                1      0.01
+                   73.South Sulawesi                              620      4.58
+                   76                                              28      0.21
+                   total                                       13,536    100.00
+
+SC020700           Kab 2007 in 2000 BPS code
+
+                   min:                                          1.00
+                   mean:                                        26.66
+                   max:                                         78.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 32
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_SC               Bk K Location and sampling
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+SC020707           Kab 2007 in 2007 BPS code
+
+                   min:                                          1.00
+                   mean:                                        27.98
+                   max:                                         79.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+SC030700           Kec 2007 in 2000 BPS code
+
+                   min:                                         10.00
+                   mean:                                        87.75
+                   max:                                        740.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+SC030707           Kec 2007 in 2007 BPS code
+
+                   min:                                         10.00
+                   mean:                                        79.47
+                   max:                                        740.00
+                   #obs                                        13,536
+                   #miss:                                           0
+
+SC05               Urban/Rural
+
+                   1. Urban                                     7,386     54.57
+                   2. Rural                                     6,150     45.43
+                   total                                       13,536    100.00
+
+SC10               Code of field coordinator
+
+
+SC12               Code of local supervisor
+
+
+SC14               Code of first interviewer
+
+
+SC15               Code of second interviewer
+
+
+SC21X              Do you know how distant HH moved?
+
+                   1. Distance given (Moved in the same vil       788      5.82
+                   11. Moved outside village, in the same s     1,936     14.30
+                   12. Moved outside village, in the same d       978      7.23
+                   13. Moved outside village, in the same p     1,164      8.60
+                   14. Moved outside village, in the new pr       906      6.69
+                   96. Did not move                             7,703     56.91
+                   98. Don't Know                                  61      0.45
+                   total                                       13,536    100.00
+
+------------------------------------------------------------------------------------
+IFLS4 HOUSEHOLD SURVEY CODEBOOK                                            page 33
+book:    BK  - Control Book - Household Roster and Location                                   
+module:  BK_SC               Bk K Location and sampling
+------------------------------------------------------------------------------------
+variable name      value                                    frequency     percent   
+------------------------------------------------------------------------------------
+
+SC21               Distance household moved
+
+                   min:                                          0.00
+                   mean:                                       468.63
+                   max:                                       9999.00
+                   #obs                                         1,030
+                   #miss:                                      12,506
+
+VERSION            IFLS 4 release number
+
+                   min:                                          1.00
+                   mean:                                         1.00
+                   max:                                          1.00
+                   #obs                                        13,536
+                   #miss:                                           0

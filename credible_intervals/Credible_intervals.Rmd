@@ -1,0 +1,79 @@
+---
+title: "Plot credible intervals"
+author: "Sarah Teichman"
+date: "02/03/21"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_3-9-21.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r,echo=F}
+fit <- fit_ifls
+dat <- deflate_y_dat
+fit_summ <- as.data.frame(summary(fit)$summary)
+```
+
+```{r,echo=F}
+labs <- c("Agriculture","Manufacturing","Construction","Hospitality",
+          "Transportation","Business","Social Services")
+```
+
+```{r, echo = F, eval = F}
+tau_params <- grep("tau",rownames(fit_summ), value = T)[3:10]
+x <- as.matrix(fit, pars = tau_params)  
+x <- 1/x
+mcmc_intervals(x, prob = 0.80, prob_outer = 0.95) + 
+  scale_y_discrete("Variance Parameter", labels = c(labs,"Switching Jobs")) + 
+  ggtitle("Credible Intervals for Variance Parameters")
+```
+
+```{r ls_taus, echo = F}
+ls_tau_params <- c("tau_w0", "tau_w")
+x <- as.matrix(fit, pars = ls_tau_params)
+x <- 1/x
+mcmc_intervals(x, prob = .8, prob_outer = .95) + 
+  scale_y_discrete("Parameter", labels = c("t=1","t>1")) + 
+  xlab("Latent space variance")
+  ggtitle("Credible intervals for latent space variances")
+``` 
+
+```{r wage_taus, echo = F}
+wage_tau_params <- c("tau", "tau_m","tau_k[1]","tau_k[2]","tau_k[3]","tau_k[4]","tau_k[5]",
+                     "tau_k[6]","tau_k[7]")
+x <- as.matrix(fit, pars = wage_tau_params)
+x <- 1/x
+mcmc_intervals(x, prob = .8, prob_outer = .95) + 
+  scale_y_discrete("Parameter", labels = c("Base","Sector change",labs)) +
+  xlab("Log wage variances") + 
+  ggtitle("Credible intervals for wage variances")
+```
+
+```{r betas, echo = F}
+beta_params <- c("beta0[1]","beta0[2]","beta0[3]","beta0[4]","beta0[5]","beta0[6]",
+                 "beta0[7]","beta1[2]","beta2[2]")
+x <- as.matrix(fit, pars = beta_params)
+mcmc_intervals(x, prob = .8, prob_outer = .95) + 
+  scale_y_discrete("Multinomial coeffiecient", labels = c(labs,
+                                                          "Persistance","Latent Space")) +
+  xlab("Estimate") + 
+  ggtitle("Credible intervals for multinomial coefficients")
+```
+
+```{r nus, echo = F}
+nu_params <- grep("nu",rownames(fit_summ), value = T)
+x <- as.matrix(fit, pars = nu_params)
+mcmc_intervals(x, prob = .8, prob_outer = .95) + 
+  scale_y_discrete("Sector", labels = labs) +
+  xlab("Sector effect") + 
+  ggtitle("Credible intervals for sector effects")
+```

@@ -1,0 +1,164 @@
+---
+title: "Decompose Variance"
+author: "Sarah Teichman"
+date: "06/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_6-18-21.rda")
+load(file = "data_no_s6.rda")
+```
+
+```{r, echo = F}
+dat_df <- data_no_s6
+K <- dat_df$K
+Ti <- dat_df$T
+N <- dat_df$N
+log_y <- log(dat_df$y)
+job <- array(data = NA, dim = c(N,Ti))
+for (i in 1:N) {
+  for (t in 1:Ti) {
+    job[i,t] <- which(dat_df$a[i,t,]==1)
+  }
+}
+dat <- data.frame(log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                  worker = rep(1:N, 3),
+                  sector = c(job[,1], job[,2], job[,3]))
+```
+
+## Compare worker and sector effects between AKM and our model 
+
+```{r,echo = F}
+fit <- fit_ifls
+post <- as.matrix(fit)
+fit_summ <- as.data.frame(summary(fit)$summary)
+mu_params <- grep("mu", row.names(fit_summ), value = T)
+nu_params <- grep("nu", row.names(fit_summ), value = T)
+f_params <- grep("unique_f", row.names(fit_summ), value = T)
+```
+
+### AKM variance results 
+
+```{r, echo = F}
+tot_var <- var(dat$log_wage)
+akm_df <- data.frame(log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                  worker = as.factor(rep(1:N,Ti)),
+                  sector = as.factor(c(job[,1],job[,2],job[,3])))
+mod <- lm(log_wage ~ -1 + worker + sector, data = akm_df)
+akm_worker_eff <- mod$coefficients[1:N]
+akm_sector_eff <- mod$coefficients[N:length(mod$coefficients)]
+akm_sector_eff[1] <- 0 
+worker_var <- var(akm_worker_eff)/tot_var
+sector_var <- var(akm_sector_eff)/tot_var
+df <- akm_df %>%
+  mutate(worker_effect = akm_worker_eff[worker],
+         sector_effect = akm_sector_eff[sector])
+worker_sector_cov <- cov(df$worker_effect, df$sector_effect)
+worker_var 
+sector_var 
+2*worker_sector_cov/tot_var 
+```
+
+### Comparison between AKM effects and our model effect means
+
+```{r, echo = F}
+worker_df <- data.frame(akm_worker = akm_worker_eff,
+                        mod_worker = fit_summ[mu_params, 1])
+ggplot(worker_df, aes(x = akm_worker, y = mod_worker)) +
+  geom_point() + 
+  xlab("AKM worker effect") + 
+  ylab("Model worker effect")
+sector_df <- data.frame(akm_sector = akm_sector_eff,
+                        mod_sector = fit_summ[nu_params, 1])
+ggplot(sector_df, aes(x = akm_sector, y = mod_sector)) +
+  geom_point() + 
+  xlab("AKM sector effect") + 
+  ylab("Model sector effect")
+cor(worker_df$akm_worker, worker_df$mod_worker)
+cor(sector_df$akm_sector, sector_df$mod_sector)
+```
+
+## Variance of posterior means in our model
+
+```{r}
+#worker_var <- var(dat$mu)
+worker_var <- var(fit_summ[mu_params,1])
+#sector_var <- var(dat$nu)
+sector_var <- var(fit_summ[nu_params,1])
+firm_var <- var(fit_summ[f_params,1])
+tot_var
+worker_var/tot_var
+sector_var/tot_var
+firm_var/tot_var
+```
+
+## Mean of posterior variances in our model 
+
+```{r,echo = F}
+post_mu <- post[,mu_params]
+post_nu <- post[,nu_params]
+post_f <- post[,f_params]
+mu_var <- apply(post_mu, 1, var)
+nu_var <- apply(post_nu, 1, var)
+f_var <- apply(post_f, 1, var)
+mu_mean_var <- mean(mu_var)
+nu_mean_var <- mean(nu_var)
+f_mean_var <- mean(f_var)
+```
+
+```{r}
+tot_var <- var(dat$log_wage)
+mu_mean_var / tot_var
+nu_mean_var / tot_var 
+f_mean_var / tot_var
+```
+
+```{r, echo = F}
+plot_df <- data.frame(mu_var = mu_var/tot_var, nu_var = nu_var/tot_var,
+                      f_var = f_var/tot_var) 
+ggplot(plot_df, aes(x = mu_var)) + geom_histogram() +
+  xlab("Proportion variance in worker effects") + ylab("Count")
+ggplot(plot_df, aes(x = nu_var)) + geom_histogram() +
+  xlab("Proportion variance in sector effects") + ylab("Counts")
+ggplot(plot_df, aes(x = f_var)) + geom_histogram() +
+  xlab("Proportion variance in firm effects") + ylab("Counts")
+```
+
+## Mean of Posterior Covariances
+
+```{r,echo = F}
+covar <- vector(length = nrow(post))
+for (i in 1:nrow(post)) {
+  worker <- rep(post[i,mu_params], 3)
+  firm <- post[i, c(f_params[dat_df$firm_effect_ind[,1]],
+                      f_params[dat_df$firm_effect_ind[,2]],
+                      f_params[dat_df$firm_effect_ind[,3]])]
+  worker <- unlist(worker)
+  firm <- unlist(firm)
+  covar[i] <- cov(worker, firm)
+}
+mean(covar)
+cov_df <- data.frame(covar = 2*covar/tot_var) 
+ggplot(cov_df, aes(x = covar)) + geom_histogram() +
+  xlab("Proportion 2*covariance in worker and firm effects") + ylab("Count")
+```
+
+## Calculate correlation between AKM and our model worker and sector effects for each iteration
+
+```{r}
+corr_worker <- vector(length = nrow(post))
+corr_sector <- vector(length = nrow(post))
+for (i in 1:nrow(post)) {
+  corr_worker[i] <- cor(post[i,mu_params], akm_worker_eff)
+  corr_sector[i] <- cor(post[i,nu_params], akm_sector_eff)
+}
+mean(corr_worker)
+mean(corr_sector)
+```
+

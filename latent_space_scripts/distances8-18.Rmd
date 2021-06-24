@@ -1,0 +1,179 @@
+---
+title: "Distances (fit 08/18)"
+author: "Sarah Teichman"
+date: "09/07/20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+library(splitstackshape)
+library(stringi)
+library(parallelDist)
+library(labdsv)
+library(ape)
+load("fit_ifls_8-18.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r,echo=F}
+K <- 7
+Ti <- 3
+N <- 1973
+labs <- c("Agriculture","Manufacturing","Construction","Hospitality",
+          "Transportation","Business","Social Services")
+```
+
+
+```{r, echo = F}
+dat <- deflate_y_dat
+log_y <- log(dat$y)
+job <- array(data = NA, dim = c(N,Ti))
+for (i in 1:N) {
+  for (t in 1:Ti) {
+    job[i,t] <- which(dat$a[i,t,]==1)
+  }
+}
+wage_job_dat <- data.frame(worker = rep(1:N,3), time = sort(rep(1:3,N)),
+                            log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                            job = c(job[,1],job[,2],job[,3])) %>%
+  mutate(job = labs[job])
+```
+
+```{r,echo=F}
+fit <- fit_ifls
+post <- as.array(fit)
+dims <- dim(post)
+n_it <- dims[1]
+n_param <- dims[3]
+chain3 <- post[1:n_it,3,1:n_param]
+```
+
+```{r, echo = F}
+beta_move <- which(chain3[,"beta"] < 1.3)
+ind <- beta_move[1]
+#ind <- ind - 3
+```
+
+Start by randomly sampling an iteration before and an iteration after 
+
+```{r, echo = F}
+before <- sample(1:(ind-1), 1)
+after <- sample((ind+1):nrow(chain3), 1)
+slice1 <- chain3[before,]
+slice2 <- chain3[after,]
+pos_z1 <- data.frame(par = names(slice1), val = unlist(slice1)) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = val)
+pos_w1 <- data.frame(par = names(slice1), val = unlist(slice1)) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(class = labs[as.numeric(class)])
+pos_z2 <-  data.frame(par = names(slice2), val = unlist(slice2)) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = val) 
+pos_w2 <- data.frame(par = names(slice2), val = unlist(slice2)) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(class = labs[as.numeric(class)])
+dist_z1 <- as.matrix(dist(pos_z1[,2:3]))
+dist_w1 <- as.matrix(dist(pos_w1[,3:4]))
+dist_z2 <- as.matrix(dist(pos_z2[,2:3]))
+dist_w2 <- as.matrix(dist(pos_w2[,3:4]))
+z_df <- data.frame(z1 = as.vector(dist_z1), z2 = as.vector(dist_z2))
+w_df <- data.frame(w1 = as.vector(dist_w1), w2 = as.vector(dist_w2))
+ggplot(z_df, aes(x = z1)) + geom_histogram(fill = "blue", alpha = .5) + 
+  geom_histogram(aes(x = z2), fill = "red", alpha = .5) + 
+  xlab("Distance") + ylab("Count") +
+  ggtitle("Distances between workers, before (blue) and after (red)")
+ggplot(z_df, aes(x = z1, y = z2)) + geom_point() +
+  geom_abline(intercept = 0, slope = 1, color = "red") + 
+  xlab("Distance before") + ylab("Distance after") +
+  ggtitle("Distances between workers")
+ggplot(w_df, aes(x = w1, y = w2)) + geom_point() +
+  geom_abline(intercept = 0, slope = 1, color = "red") + 
+  xlab("Distance before") + ylab("Distance after") + 
+  ggtitle("Distances between sectors")
+```
+
+Average over positions before and after. Then make same plots.
+
+```{r, echo = F}
+slice1 <- chain3[1:(ind-1),]
+slice2 <- chain3[ind:nrow(chain3),]
+avg1 <- colMeans(slice1)
+avg2 <- colMeans(slice2)
+pos_z1 <- data.frame(par = names(avg1), val = unlist(avg1)) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = val)
+pos_w1 <- data.frame(par = names(avg1), val = unlist(avg1)) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(class = labs[as.numeric(class)])
+pos_z2 <-  data.frame(par = names(avg2), val = unlist(avg2)) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = val) 
+pos_w2 <- data.frame(par = names(avg2), val = unlist(avg2)) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(class = labs[as.numeric(class)])
+dist_z1 <- as.matrix(dist(pos_z1[,2:3]))
+dist_w1 <- as.matrix(dist(pos_w1[,3:4]))
+dist_z2 <- as.matrix(dist(pos_z2[,2:3]))
+dist_w2 <- as.matrix(dist(pos_w2[,3:4]))
+z_df <- data.frame(z1 = as.vector(dist_z1), z2 = as.vector(dist_z2))
+w_df <- data.frame(w1 = as.vector(dist_w1), w2 = as.vector(dist_w2))
+ggplot(z_df, aes(x = z1)) + geom_histogram(fill = "blue", alpha = .5) + 
+  geom_histogram(aes(x = z2), fill = "red", alpha = .5) + 
+  xlab("Distance") + ylab("Count") +
+  ggtitle("Distances between workers, before (blue) and after (red)")
+ggplot(z_df, aes(x = z1, y = z2)) + geom_point() +
+  geom_abline(intercept = 0, slope = 1, color = "red") + 
+  xlab("Distance before") + ylab("Distance after") +
+  ggtitle("Distances between workers")
+ggplot(w_df, aes(x = w1, y = w2)) + geom_point() +
+  geom_abline(intercept = 0, slope = 1, color = "red") + 
+  xlab("Distance before") + ylab("Distance after") + 
+  ggtitle("Distances between sectors")
+```

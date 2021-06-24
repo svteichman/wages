@@ -1,0 +1,38 @@
+---
+title: "Variance parameters"
+author: "Sarah Teichman"
+date: "07/28/20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_7-22a.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r,echo=F}
+fit <- fit_ifls
+dat <- deflate_y_dat
+fit_summ <- as.data.frame(summary(fit)$summary)
+```
+
+```{r,echo=F}
+labs <- c("Agriculture","Manufacturing","Construction","Hospitality",
+          "Transportation","Business","Social Services")
+```
+
+```{r, echo = F}
+tau_params <- grep("tau",rownames(fit_summ), value = T)[3:10]
+x <- as.matrix(fit, pars = tau_params)  
+x <- 1/x
+mcmc_intervals(x, prob = 0.80, prob_outer = 0.95) + 
+  scale_y_discrete("Variance Parameter", labels = c(labs,"Switching Jobs")) + 
+  ggtitle("Credible Intervals for Variance Parameters")
+```

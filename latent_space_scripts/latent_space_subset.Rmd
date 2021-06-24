@@ -1,0 +1,164 @@
+---
+title: "Latent space for a subset of the posterior"
+author: "Sarah Teichman"
+date: "05/19/20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+library(splitstackshape)
+library(stringi)
+library(parallelDist)
+library(labdsv)
+library(ape)
+load("fit_ifls_5-15.rda")
+load("deflate_y_dat.rda")
+```
+
+```{r,echo=F}
+fit <- fit_ifls
+dat <- deflate_y_dat
+post <- as.data.frame(fit)
+fit_summ <- as.data.frame(summary(fit)$summary)
+```
+
+```{r,echo=F}
+K <- 7
+Ti <- 3
+N <- 1973
+labs <- c("Agriculture","Manufacturing","Construction","Hospitality",
+          "Transportation","Business","Social Services")
+```
+
+
+```{r, echo = F}
+log_y <- log(dat$y)
+job <- array(data = NA, dim = c(N,Ti))
+for (i in 1:N) {
+  for (t in 1:Ti) {
+    job[i,t] <- which(dat$a[i,t,]==1)
+  }
+}
+wage_job_dat <- data.frame(worker = rep(1:N,3), time = sort(rep(1:3,N)),
+                            log_wage = c(log_y[,1],log_y[,2],log_y[,3]),
+                            job = c(job[,1],job[,2],job[,3])) %>%
+  mutate(job = labs[job])
+```
+
+```{r, echo = F}
+quant <- quantile(unlist(post["tau_w0"]), probs = seq(.025,.975,.025))
+med_by_quant <- array(dim = c(dim(post)[2], length(quant)+1))
+ind <- which(post["tau_w0"] <= quant[1])
+small_post <- post[ind,]
+med_by_quant[,1] <- unlist(lapply(small_post, median))
+for (i in 2:length(quant)) {
+  ind <- which(post["tau_w0"] <= quant[i] & post["tau_w0"] > quant[i-1])
+  small_post <- post[ind,]
+  med_by_quant[,i] <- unlist(lapply(small_post, median))
+}
+ind <- which(post["tau_w0"] > quant[length(quant)])
+small_post <- post[ind,]
+med_by_quant[,length(quant)+1] <- unlist(lapply(small_post, median))
+```
+
+```{r,echo=F}
+pos_z <- data.frame(par = rownames(fit_summ), val = med_by_quant[,1]) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(job1 = job[,1],
+         job2 = job[,2],
+         job3 = job[,3]) %>%
+  pivot_longer(cols = c(job1,job2,job3),names_to = "time",names_prefix = "job") %>% 
+  mutate(class = labs[value]) %>%
+  select(-value) %>% 
+  filter(time == "1")
+pos_w <- data.frame(par = rownames(fit_summ), val = med_by_quant[,1]) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(class = labs[as.numeric(class)]) %>%
+  filter(time == "1")
+ggplot() +  geom_point(data = pos_z, aes(x = `1`, y = `2`, color = class, alpha = 0.5)) + 
+  geom_point(data = pos_w, aes(x = `1`, y = `2`, fill = class), 
+             shape = 25, size = 4, color = "black")  +
+  #facet_wrap(~time) + 
+  ggtitle("Lowest 2.5th quantile of tau_w0 values")
+```
+
+```{r,echo=F}
+pos_z <- data.frame(par = rownames(fit_summ), val = med_by_quant[,20]) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(job1 = job[,1],
+         job2 = job[,2],
+         job3 = job[,3]) %>%
+  pivot_longer(cols = c(job1,job2,job3),names_to = "time",names_prefix = "job") %>% 
+  mutate(class = labs[value]) %>%
+  select(-value) %>%
+  filter(time == "1")
+pos_w <- data.frame(par = rownames(fit_summ), val = med_by_quant[,20]) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(class = labs[as.numeric(class)]) %>%
+  filter(time == "1")
+ggplot() +  geom_point(data = pos_z, aes(x = `1`, y = `2`, color = class, alpha = 0.5)) + 
+  geom_point(data = pos_w, aes(x = `1`, y = `2`, fill = class), 
+             shape = 25, size = 4, color = "black")  +
+  #facet_wrap(~time) + 
+  ggtitle("47.5-50th quantile of tau_w0 values")
+```
+
+```{r,echo=F}
+pos_z <- data.frame(par = rownames(fit_summ), val = med_by_quant[,length(quant)+1]) %>%
+  filter(grepl("z\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(worker = stri_extract_first_regex(par_1,"[0-9]+"),
+         dim = stri_extract_first_regex(par_2,"[0-9]+")) %>%
+  select(-c("par_1","par_2")) %>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(job1 = job[,1],
+         job2 = job[,2],
+         job3 = job[,3]) %>%
+  pivot_longer(cols = c(job1,job2,job3),names_to = "time",names_prefix = "job") %>% 
+  mutate(class = labs[value]) %>%
+  select(-value) %>%
+  filter(time == "1")
+pos_w <- data.frame(par = rownames(fit_summ), val = med_by_quant[,length(quant)+1]) %>%
+  filter(grepl("w\\[", par)) %>%
+  cSplit("par",direction = "wide") %>%
+  mutate(class = stri_extract_first_regex(par_1,"[0-9]+"),
+         time = stri_extract_first_regex(par_2,"[0-9]+"),
+         dim = stri_extract_first_regex(par_3,"[0-9]+")) %>%
+  select(-c("par_1","par_2","par_3"))%>%
+  pivot_wider(names_from = dim, values_from = val) %>%
+  mutate(class = labs[as.numeric(class)]) %>%
+  filter(time == "1")
+ggplot() +  geom_point(data = pos_z, aes(x = `1`, y = `2`, color = class, alpha = 0.5)) + 
+  geom_point(data = pos_w, aes(x = `1`, y = `2`, fill = class), 
+             shape = 25, size = 4, color = "black")  +
+  #facet_wrap(~time) + 
+  ggtitle("Highest 2.5th quantile of tau_w0 values")
+```

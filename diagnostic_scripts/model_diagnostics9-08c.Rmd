@@ -1,0 +1,93 @@
+---
+title: "MCMC Diagnostics - IFLS data"
+author: "Sarah Teichman"
+date: "09/08/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_9-08c.rda")
+```
+
+```{r, echo = F}
+K <- 7
+Ti <- 3
+N <- 1973
+```
+
+## General MCMC diagnostic plots 
+
+Overall model diagnostics from rstan package. 
+
+```{r,echo = F}
+fit <- fit_ifls
+```
+
+```{r, echo = F}
+output_basic <- function(fit) {
+  #Rhat statistics 
+  print(stan_rhat(fit))
+  #Ratio of effective sample size / Sample size 
+  print(stan_ess(fit))
+  #ratio of Monte Carlo standard error to posterior standard deviation 
+  print(stan_mcse(fit))
+}
+output_basic(fit)
+```
+
+### Individual Parameter Diagnostics 
+
+Individual parameter plots. Autocorrelation and trace plots for individual parameters, and histograms of posterior medians for group parameters. 
+
+```{r, echo = F}
+fit_summ <- as.data.frame(summary(fit)$summary)
+tau_params <- grep("tau", row.names(fit_summ), value = T)
+```
+
+```{r, echo = F}
+get_single_plots <- function(fit, param) { 
+  print(fit_summ[param,c(1,2,3,5,6,7,9,10)])
+  print(stan_ac(fit, pars = param))
+  print(rstan::traceplot(fit, pars = param))
+} 
+get_aggreg_plots <- function(fit, param, trim = F, trim_amount) {
+  ind <- grep(paste0("^",param), rownames(as.data.frame(summary(fit)$summary)))
+  medians <- data.frame(avg = as.data.frame(summary(fit)$summary)$`50%`[ind])
+  title <- paste0("Posterior Medians of ",param)
+  print(ggplot(medians, aes(x = avg)) + geom_histogram(bins = 30) + ggtitle(title) +
+    xlab("Medians") + ylab("Count"))
+  print("       ")
+  if (trim == T) {
+    lim <- quantile(abs(medians$avg), probs = trim_amount)
+    meds_trim <- medians %>% filter(abs(medians$avg) < lim)
+    print(ggplot(meds_trim, aes(x = avg)) + geom_histogram(bins = 60) + 
+            ggtitle(paste0(title, " Without Extreme ",100*(1-trim_amount),"%")))
+  }
+  means <- data.frame(avg = as.data.frame(summary(fit)$summary)$`mean`[ind])
+  title <- paste0("Posterior Means of ",param)
+  print(ggplot(means, aes(x = avg)) + geom_histogram(bins = 30) + ggtitle(title) +
+    xlab("Means") + ylab("Count"))
+  print("      ")
+  sds <- data.frame(avg = as.data.frame(summary(fit)$summary)$`sd`[ind])
+  title <- paste0("Posterior Standard Deviations of ",param)
+  print(ggplot(sds, aes(x = avg)) + geom_histogram(bins = 30) + ggtitle(title) +
+    xlab("Standard Deviations") + ylab("Count"))
+}
+plot_fit <- function(fit) {
+  get_single_plots(fit, tau_params)
+  get_aggreg_plots(fit, "z")
+  get_aggreg_plots(fit, "w")
+  get_aggreg_plots(fit, "mu")
+  get_aggreg_plots(fit, "nu")
+  get_aggreg_plots(fit, "p")
+}
+plot_fit(fit)
+```
+

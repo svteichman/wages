@@ -1,0 +1,109 @@
+---
+title: "MCMC Diagnostics - IFLS data"
+author: "Sarah Teichman"
+date: "04/17/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+load("fit_ifls_4-16.rda")
+```
+
+```{r}
+K <- 7
+Ti <- 3
+N <- 1973
+```
+
+## General MCMC diagnostic plots 
+
+Overall model diagnostics from rstan package. 
+
+```{r,echo = F}
+fit <- fit_ifls
+#fit <- fit_test_ifls
+fit_summ <- as.data.frame(summary(fit)$summary)
+```
+
+```{r, echo = F}
+output_basic <- function(fit) {
+  #Rhat statistics 
+  print(stan_rhat(fit))
+  #Ratio of effective sample size / Sample size 
+  print(stan_ess(fit))
+  #ratio of Monte Carlo standard error to posterior standard deviation 
+  print(stan_mcse(fit))
+}
+output_basic(fit)
+```
+
+### Individual Parameter Diagnostics 
+
+Individual parameter plots. Autocorrelation and trace plots for individual parameters, and histograms of posterior medians for group parameters. 
+
+```{r, echo = F}
+fit_summ <- as.data.frame(summary(fit)$summary)
+sigma_params <- sort(grep("sigma",row.names(fit_summ), value=T)[1:32])[1:16]
+#beta_k <- grep("beta_k",row.names(fit_summ), value=T)
+beta_0 <- "beta_0"
+u <- grep("u",row.names(fit_summ), value=T)[2:8]
+v <- grep("v",row.names(fit_summ), value=T)[2:8]
+q <- grep("q",row.names(fit_summ), value=T)[8:14]
+other_1d <- c("delta[1]","delta[2]","beta[1]","beta[2]","zeta[1]","zeta[2]")
+lambda <- grep("lambda",row.names(fit_summ), value=T)
+eta <- grep("eta",row.names(fit_summ), value=T)
+kappa <- grep("kappa",row.names(fit_summ), value=T)
+```
+
+```{r}
+get_single_plots <- function(fit, param) { 
+  print(fit_summ[param,c(1,2,3,5,6,7,9,10)])
+  print(stan_ac(fit, pars = param))
+  print(rstan::traceplot(fit, pars = param))
+} 
+get_aggreg_plots <- function(fit, param, trim = F, trim_amount) {
+  ind <- grep(paste0("^",param), rownames(as.data.frame(summary(fit)$summary)))
+  medians <- data.frame(avg = as.data.frame(summary(fit)$summary)$`50%`[ind])
+  print(paste0("Summary statistics for posterior medians of ",param))
+  print(summary(medians))
+  title <- paste0("Posterior Medians of ",param)
+  print(ggplot(medians, aes(x = avg)) + geom_histogram(bins = 60) + ggtitle(title))
+  if (trim == T) {
+    lim <- quantile(abs(medians$avg), probs = trim_amount)
+    meds_trim <- medians %>% filter(abs(medians$avg) < lim)
+    print(ggplot(meds_trim, aes(x = avg)) + geom_histogram(bins = 60) + 
+            ggtitle(paste0(title, " Without Extreme ",100*(1-trim_amount),"%")))
+  }
+}
+plot_fit <- function(fit) {
+  get_single_plots(fit, sigma_params)
+#  get_single_plots(fit, beta_k)
+  get_single_plots(fit, beta_0)
+  get_single_plots(fit, other_1d)
+  get_single_plots(fit, u)
+  get_single_plots(fit, v)
+  get_single_plots(fit, q)
+  get_aggreg_plots(fit, "w")
+  get_aggreg_plots(fit, "z")
+  get_aggreg_plots(fit, "p")
+  get_aggreg_plots(fit, "eta", trim = T, trim_amount = .60)
+  get_aggreg_plots(fit, "lambda", trim = T, trim_amount = .60)
+  get_aggreg_plots(fit, "kappa", trim = T, trim_amount = .60)
+}
+plot_fit(fit)
+```
+
+## Identifying Parameters with Large Rhats
+
+```{r}
+summary(fit_summ$Rhat)
+big_Rhat <- fit_summ$Rhat > 5
+big_Rhat_dat <- fit_summ[big_Rhat,c(1,2,10)]
+big_Rhat_dat
+```

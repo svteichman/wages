@@ -1,0 +1,81 @@
+---
+title: "Checking probabilities"
+author: "Sarah Teichman"
+date: "08/11/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_8-04.rda")
+```
+
+```{r, echo = F}
+K <- 7
+Ti <- 3
+N <- 1973
+```
+
+## Look at raw probabilities
+
+```{r,echo = F}
+fit <- fit_ifls
+post <- as.array(fit)
+dims <- dim(post)
+n_it <- dims[1]
+n_param <- dims[3]
+chain4 <- post[1:n_it,4,1:n_param]
+```
+
+```{r, echo = F}
+prob_ind <- grep("^p",colnames(chain4))
+chain4_1 <- chain4[1:(n_it/2),]
+chain4_2 <- chain4[(n_it/2+1):n_it,]
+prob4_1 <- chain4_1[,prob_ind]
+prob4_2 <- chain4_2[,prob_ind]
+prob_avg1 <- colMeans(prob4_1)
+prob_avg2 <- colMeans(prob4_2)
+plot_df <- data.frame(before = prob_avg1, after = prob_avg2)
+ggplot(plot_df, aes(x = before, y = after)) + 
+  geom_point() +
+  xlab("Raw Probabilities for Larger Beta") +
+  ylab("Raw Probabilities for Smaller Beta")
+```
+
+## Probabilities (for large and small $\beta$)
+
+```{r, echo = F}
+plot_df$id <- rep(1:(N*Ti),7)
+plot_df$sector <- sort(rep(1:7,N*Ti))
+before <- plot_df %>% select(-after) %>% 
+  pivot_wider(id_cols = "id", names_from = "sector", 
+              values_from = "before", names_prefix = "before") %>%
+  select(-id)
+after <- plot_df %>% select(-before) %>% 
+  pivot_wider(id_cols = "id", names_from = "sector",
+              values_from = "after", names_prefix = "after") %>%
+  select(-id)
+before_exp <- exp(before)
+after_exp <- exp(after)
+before_probs <- before_exp/rowSums(before_exp)
+after_probs <- after_exp/rowSums(after_exp)
+prob_df <- data.frame(before = unlist(before_probs), after = unlist(after_probs))
+ggplot(prob_df, aes(x = before, y = after)) + 
+  geom_point() +
+  xlab("Probabilities for Larger Beta") +
+  ylab("Probabilities for Smaller Beta")
+```
+
+## Randomly sampled probabilities
+
+```{r, echo = F}
+prob_samp <- sample(prob_ind, 10)
+prob_names <- colnames(chain4)[prob_samp]
+rstan::traceplot(fit, pars = prob_names)
+```

@@ -1,0 +1,137 @@
+---
+title: "MCMC Diagnostics - 1/23 - Simulated values as noisy initial values"
+author: "Sarah Teichman"
+date: "10/31/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+#load("~/Documents/UW/research/Model/wages_R/fit1.rda")
+#load("~/Documents/UW/research/Model/wages_R/fit_sim.rda")
+#load("~/Documents/UW/research/Model/wages_R/simulated_params.rda")
+load("fit_test_res.rda")
+```
+
+```{r, echo = F}
+fit_summ <- as.data.frame(summary(fit)$summary)
+sigma_params <- sort(grep("sigma",row.names(fit_summ), value=T)[1:32])[1:16]
+beta_k <- grep("beta_k",row.names(fit_summ), value=T)
+u <- grep("u",row.names(fit_summ), value=T)[2:8]
+v <- grep("v",row.names(fit_summ), value=T)[2:8]
+q <- grep("q",row.names(fit_summ), value=T)[8:14]
+other_1d <- c("alpha[1]","alpha[2]","delta[1]","delta[2]","beta[1]","beta[2]","zeta[1]","zeta[2]")
+lambda <- grep("lambda",row.names(fit_summ), value=T)
+eta <- grep("eta",row.names(fit_summ), value=T)
+kappa <- grep("kappa",row.names(fit_summ), value=T)
+```
+
+### Overall Model Diagnostics 
+
+Overall model diagnostics from rstan package. 
+
+```{r, echo = F}
+output_basic <- function(fit) {
+  #Rhat statistics 
+  print(stan_rhat(fit))
+  #Ratio of effective sample size / Sample size 
+  print(stan_ess(fit))
+  #ratio of Monte Carlo standard error to posterior standard deviation 
+  print(stan_mcse(fit))
+}
+output_basic(fit)
+```
+
+### Individual Parameter Diagnostics 
+
+Individual parameter plots. Autocorrelation and trace plots for individual parameters, and histograms of posterior means for group parameters (w, z, p). 
+
+```{r, echo = F}
+get_single_plots <- function(fit, param) { 
+  print(stan_ac(fit, pars = param))
+  print(rstan::traceplot(fit, pars = param))
+} 
+get_aggreg_plots <- function(fit, param, trim = F, trim_amount) {
+  ind <- grep(paste0("^",param), rownames(as.data.frame(summary(fit)$summary)))
+  means <- data.frame(avg = as.data.frame(summary(fit)$summary)$mean[ind])
+  print(summary(means))
+  title <- paste0("Posterior Means of ",param)
+  print(ggplot(means, aes(x = avg)) + geom_histogram(bins = 30) + ggtitle(title))
+  if (trim == T) {
+    lim <- quantile(abs(means$avg), probs = trim_amount)
+    means_trim <- means %>% filter(abs(means$avg) < lim)
+    print(ggplot(means_trim, aes(x = avg)) + geom_histogram(bins = 30) + 
+            ggtitle(paste0(title, " Without Extremes")))
+    means_out <- means %>% filter(abs(means$avg) > lim) 
+    summary(means_out)
+  }
+}
+plot_fit <- function(fit) {
+  get_single_plots(fit, sigma_params)
+  get_single_plots(fit, beta_k)
+  get_single_plots(fit, other_1d)
+  get_single_plots(fit, u)
+  get_single_plots(fit, v)
+  get_single_plots(fit, q)
+  get_aggreg_plots(fit, "w")
+  get_aggreg_plots(fit, "z")
+  get_aggreg_plots(fit, "p", trim = T, trim_amount = .90)
+}
+plot_fit(fit)
+```
+
+```{r,echo = F}
+cutoff <- 50
+```
+
+### Standardized Differences 
+
+Histogram of $\frac{|\theta_0-\hat{\theta}|}{\theta_0}$ for all parameters, where $\hat{\theta}$ is the posterior mean. Histogram only includes standardized differences with an absolute value less than `r cutoff`. The differences excluded from the histogram are listed below. 
+
+```{r, echo = F}
+get_diff <- function(true_params, stan_ob, stat) {
+  params <- unlist(true_params)
+  fit_summary <- as.data.frame(summary(stan_ob)$summary)
+  np <- length(params)
+  if (stat == "mean") {
+    post_stat <- fit_summary$mean[1:np] 
+  }
+  if (stat == "median") {
+    post_stat <- fit_summary$`50%`[1:np]
+  }
+  diff <- array(data = NA, dim = np)
+  for (i in 1:np) {
+    diff[i] <- abs(params[i]-post_stat[i])/params[i]  
+  }
+  return(data.frame(diff = diff, var = names(params)))
+}
+diff1 <- get_diff(params, fit, "mean")
+diff1_no_out <- diff1 %>%
+  filter(abs(diff) < cutoff)
+ggplot(data = diff1_no_out, aes(x=diff)) + geom_histogram(fill = "red", alpha = 0.5) 
+per_outliers1 <- 1-nrow(diff1_no_out)/nrow(diff1)
+diff1_out <- diff1 %>%
+  filter(abs(diff) > cutoff) %>% 
+  arrange(desc(diff))
+diff1_out
+```
+
+The same as above, but with $\hat{\theta}$ as the posterior median. 
+
+```{r, echo = F}
+diff3 <- get_diff(params, fit, "median")
+cutoff <- 50
+diff3_no_out <- diff3 %>%
+  filter(abs(diff) < cutoff)
+ggplot(data = diff3_no_out, aes(x=diff)) + geom_histogram(fill = "red", alpha = 0.5, bins = 30)
+per_outliers3 <- 1-nrow(diff3_no_out)/nrow(diff3)
+diff3_out <- diff3 %>%
+  filter(abs(diff) > cutoff) %>%
+  arrange(desc(diff))
+diff3_out
+```

@@ -1,0 +1,67 @@
+---
+title: "Posterior Predictive Distribution"
+author: "Sarah Teichman"
+date: "08/10/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bayesplot)
+library(rstan)
+library(tidyverse)
+theme_update(plot.title = element_text(hjust = 0.5))
+load("fit_ifls_8-04.rda")
+```
+
+```{r, echo = F}
+K <- 7
+Ti <- 3
+N <- 1973
+```
+
+## Posterior Predictive Distribution
+
+
+```{r,echo = F}
+fit <- fit_ifls
+post <- as.data.frame(fit)
+```
+
+```{r, echo = F}
+n <- 500
+ind <- sample(x = 1:nrow(post), size = n)
+res <- matrix(data = NA, nrow = n, ncol = N*Ti)
+means <- matrix(data = NA, nrow = n, ncol = N*Ti)
+mu_ind <- grep("mu", names(post[1,]))
+sigma_ind <- grep("sigma_i", names(post[1,]))
+for (i in 1:n) {
+  mu_vec <- rep(post[i, mu_ind],3)
+  means[i,] <- unlist(mu_vec)
+  sigma_vec <- post[i, sigma_ind]
+  res[i,] <- rnorm(N*Ti, unlist(mu_vec), unlist(sigma_vec))
+}
+write.csv(res, "8-04_post_predict_dist.csv")
+```
+
+```{r, echo = F}
+plot_df <- data.frame(log_wage = as.vector(res))
+mean_df <- data.frame(expected = as.vector(means))
+ggplot(plot_df, aes(x = log_wage)) + 
+  geom_histogram() + xlab("Log Wage") +
+  ggtitle("Posterior Predictive Distribution of Wages")
+```
+
+```{r}
+summary(plot_df$log_wage)
+sd(plot_df$log_wage)
+sd(plot_df$log_wage)/sqrt(nrow(plot_df))
+```
+
+```{r}
+var(plot_df$log_wage)
+var(mean_df$expected)
+```
+

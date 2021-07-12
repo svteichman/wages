@@ -1,0 +1,31 @@
+---
+title: "Comparison between Simulated and IFLS Data"
+output: 
+   pdf_document:
+    toc: true
+    number_sections: true
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+\newpage 
+
+# Comparison of Log Wage Distribution
+```{r , echo=FALSE}
+setwd("/Users/wanghoujie/Documents/GitHub/wages/simulation")
+knitr::include_graphics("wage_comparison.pdf")
+```
+
+\newpage 
+# Comparison of Sector Distribution
+```{r, echo=FALSE}
+knitr::include_graphics("sector_distr_comparison.pdf")
+```
+\newpage 
+
+# Comparison of Number of Workers with Wage Increase and Same Sector
+```{r , echo=FALSE}
+knitr::include_graphics("wage_stay_comparison.pdf")
+```
+

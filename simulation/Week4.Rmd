@@ -9,16 +9,17 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library(Rfast)
 library(rstan)
+library(car)
 setwd("~/Documents/Github/wages")
 load(file = 'parm_fit_ifls_7-13-21.rda')
 load(file = "data/deflate_y_dat.rda")
 ```
 \newpage
-# Pipeline to Generate Data  
+# Things Done Last Week
 
 ## Extract the Parameters from Pre-trained Model
-I run the latent space model `wages_simple3-9-21.stan` and name the new stan object with 7-13-21, then use the mean of each parameter sample as the estimate. No need to run this code chunk as a simplified file containing all parameter estimates `parm_fit_ifls_7-13-21.rda` has been created.
-```{r, eval = FALSE}
+I run the latent space model `wages_simple3-9-21.stan` and name the new stan object with 7-13-21, then use the mean of each parameter sample as the estimate and store them in  `parm_fit_ifls_7-13-21.rda` for the ease of loading.
+```{r, eval = FALSE, echo=FALSE}
 setwd("~/Documents/Github/wages")
 load('fit_ifls_7-13-21.rda')
 #### Extract all parameter estiamtes from latent space model ####
@@ -32,8 +33,8 @@ all_parm <- colMeans(all_parm)
 ```  
 
 ## Prepare Parameters for Data Generation
-The parameters of worker and sector latent space, $\beta_0^k$, $\beta_1^k$, $\beta_2^k$, wage variance $\sigma_i^2$, sector effect $\nu_k$ from the pre-trained latent space model are used in the simulation. Not all parameters extracted are used.
-```{r}
+The parameters of worker and sector latent space, $\beta_0^k$, $\beta_1^k$, $\beta_2^k$, wage variance $\sigma_i^2$, sector effect $\nu_k$ and its hyperparameter $\tau_k$ from the pre-trained latent space model are used in the simulation. 
+```{r, echo = F}
 set.seed(8888)
 N <- deflate_y_dat$N 
 TT <- deflate_y_dat$T
@@ -91,8 +92,8 @@ tau_x0 <- tau_w0
 tau_x <- tau_w
 ```  
 
-Values of coefficients of edge probability between firm and sector (i.e. $\gamma_0^l$, $\gamma_1^l$, $\gamma_2^l$) might require some further consideration. At this stage, for all $l= 1,\ldots,L_k$, I let $\gamma_0^l$ is random sample from $\beta_0^k$, $\gamma_1^l=\beta^k_1$ and $\gamma_2^l=\beta^k_2$. Using normal random sample for all $\gamma^l$'s might sometimes lead to weird edge pattern. (e.g. 99% of workers in each sector work for only one firm over time)
-```{r}
+Values of coefficients of edge probability between firm and sector (i.e. $\gamma_0^l$, $\gamma_1^l$, $\gamma_2^l$) might require some further consideration. At this stage, for all $l= 1,\ldots,L_k$, I let $\gamma_0^l$ to be random sample from $\beta_0^k$, $\gamma_1^l=\beta^k_1$ and $\gamma_2^l=\beta^k_2$. Using normal random sample for all $\gamma^l$'s might sometimes lead to weird edge pattern. (e.g. 99% of workers in each sector work for only one firm over time)
+```{r, echo = F}
 all_gamma <- matrix(NA, nrow = 3, ncol = max(L))
 all_gamma[, 1] <- 0
 all_gamma[1, -1] <- sample(all_beta[1, -1], max(L)-1, replace = T)
@@ -103,8 +104,10 @@ rownames(all_gamma) <- paste("gamma", 0: 2, sep = "")
 
 ## Data Generation  
 
-In the new data generation pipeline, in addition to using higher dimensional latent space and plugging in parameters from the pre-trained model, I modified some steps of data generation such that the simulated data can become closer to the real one. The first change is that instead of doing log normal sampling for wages with log mean as the direct sum of worker and firm effect, which always leads to wage sample significantly larger than the real data, I use a regression model: $log(Y_{i_{IFLS}})=\alpha_1\mu_i+\alpha_2f_i^{(t)}+\epsilon_i$ and take the fitted values as the mean of the log normal distribution of the wages. I also reduce the variance parameters of wages with multiplicative factors different over years since those obtained from the model seem to be so large that the wage sample tend to be larger than real wage as well. The choice of the multiplicative factors is ad hoc and maybe a formal justification is needed later.
-```{r}
+In the new data generation pipeline, to mitigate the issue of simulated wage too large and number of wage increase dissimilar to real data, 
+instead of sampling based on $Y_i^{(t)}\sim N(\hat{\mu}_i+f_i^{(t)}, \hat{\sigma}_i^2)$, I tried $Y_i^{(t)}\sim N(\alpha_1\hat{\mu}_i+\alpha_2f_i^{(t)}, \hat{\sigma^2}/c^{(t)})$, where $\hat{\mu}_i$ and $\hat{\sigma}_i^2$ are parameter estimates from the latent space model and $\alpha_1, \alpha_2$ are fitted from a regression model: $Y_{i_{IFLS}}^{(t)}=\alpha_1\hat{\mu}_i+\alpha_2f_i^{(t)}+\epsilon_i$. $c^{(t)}$ serves to reduce the variance. The current values are 2, 2.3, 2.5, which were chosen when the wage increase pattern of simulated data is similar to the real one. These changes are somewhat ad hoc and may need further justification in the future.
+
+```{r, echo = F}
 Y <- matrix(NA, N, TT) # wage
 log_Y <- matrix(NA, N, TT) # log wage
 firm_effect <- array(NA, dim = c(N, TT)) # firm effect
@@ -123,6 +126,7 @@ for (k in 1: K) {
 correction_factor <- c(2, 2.3, 2.5)
 sigma_corrected <- eachrow(sigma, correction_factor, "/")
 case = "latent"
+lm_list <- list()
 for (t in 1: TT) {
   dist_mat1 <- sqrt(matrix(rowsums(z^2), nrow = N, ncol = K) + 
                       z %*% t(w[, t, ]) + 
@@ -140,8 +144,6 @@ for (t in 1: TT) {
   if(case == "latent"){
     temp_x <- x[, -1, (t + 1), ] # prepare for latent space at time t,
     temp_x_prev <- x[, -1, t, ]
-    
-    # sample for all firm latent space at time t, which are all independent
     temp_x[!is.na(temp_x)] <- rmvnorm(1, mu = temp_x_prev[!is.na(temp_x_prev)], 
                                       sigma = 1/(as.numeric(t == 1)*tau_x0 + 
                                               as.numeric(t != 1)*tau_x)*diag(sum(!is.na(temp_x))))
@@ -172,6 +174,7 @@ for (t in 1: TT) {
   log_wage_IFLS <- log(deflate_y_dat$y[, t])
   fit_lm <- lm(log_wage_IFLS ~ mu + firm_effect[, t] - 1)
   log_wage_mean <- fitted(fit_lm)
+  lm_list <- append(lm_list, list(fit_lm))
   Y[, t] <- sapply(1: N, function(i){rlnorm(1, mean = log_wage_mean[i], 
                                             sd = sigma_corrected[i, t])})
   log_Y[, t] <- log(Y[, t])
@@ -201,6 +204,28 @@ knitr::include_graphics("sector_distr_comparison_2.pdf")
 
 ```{r, echo=FALSE}
 knitr::include_graphics("wage_stay_comparison_2.pdf")
-```  
+```   
+\newpage 
 
+# Question
+
+In the regression model between log wage and worker and firm effect, heteroschedasticity exists while the variance parameters from latent space model are rather stable for different workers. Is this reasonable?
+
+Here are some diagnostic plot and test result showing the non-constantness of variance:
+```{r, echo = F}
+par(mfrow = c(2, 2))
+for (i in 1: TT) {
+  plot(lm_list[[i]], 1, main = paste("Residuals vs Fitted at t=", i, sep = ""))
+  print(ncvTest(lm_list[[i]]))
+}
+```   
+\newpage
+
+Meanwhile, the variance parameter obtained from the model are relatively stable. Here is a list of variance parameter values for each time:
+```{r, echo = F}
+variance_list <- apply(sigmasq, 2, unique)
+names(variance_list) <- paste("t=", 1: TT, sep = "")
+variance_list
+``` 
+My thought would be to try to work out a function between log wage variance and work and firm effect for us to obtain better wage samples, is it worth it? 
 

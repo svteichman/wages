@@ -111,6 +111,7 @@ correction_factor <- c(2, 2.3, 2.5)
 sigma_corrected <- eachrow(sigma, correction_factor, "/")
 # case <- "simple"
 case <- "latent"
+lm_list <- list()
 for (t in 1: TT) {
   # t = 1
   dist_mat1 <- sqrt(matrix(rowsums(z^2), nrow = N, ncol = K) + z %*% t(w[, t, ]) + matrix(rowsums(w[, t, ]^2), nrow = N, ncol = K, byrow = T))
@@ -160,15 +161,14 @@ for (t in 1: TT) {
   }
   log_wage_IFLS <- log(deflate_y_dat$y[, t])
   fit_lm <- lm(log_wage_IFLS ~ mu + firm_effect[, t] - 1)
+  lm_list <- append(lm_list, list(fit_lm))
   log_wage_mean <- fitted(fit_lm)
-  par(mfrow = c(2, 2))
-  plot(fit_lm, 1: 4)
   # log_wage_mean <- mu + firm_effect[, t]
   Y[, t] <- sapply(1: N, function(i){rlnorm(1, mean = log_wage_mean[i], sd = sigma_corrected[i, t])})
   log_Y[, t] <- log(Y[, t])
 }
 data_sim <- list(N = N, time.num = TT, K = K, firm.num = L, y = Y, sector = J, firm = FF)
-save(data_sim, file = "data_sim7-16-2021") 
+# save(data_sim, file = "data_sim7-16-2021.rda") 
 
 # Sector changes of IFLS
 job <- array(data = NA, dim = c(N,TT))

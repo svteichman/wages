@@ -32,7 +32,7 @@ all_parm <- colMeans(all_parm)
 ```  
 
 ## Prepare Parameters for Data Generation
-The worker and sector latent space, $\beta_0^k$, $\beta_1^k$, $\beta_2^k$, wage variance $\sigma_i^2$, sector effect $\nu_k$ are used in the model. Not all parameters extracted are used.
+The parameters of worker and sector latent space, $\beta_0^k$, $\beta_1^k$, $\beta_2^k$, wage variance $\sigma_i^2$, sector effect $\nu_k$ from the pre-trained latent space model are used in the simulation. Not all parameters extracted are used.
 ```{r}
 set.seed(8888)
 N <- deflate_y_dat$N 

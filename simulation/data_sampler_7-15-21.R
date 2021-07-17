@@ -168,7 +168,7 @@ for (t in 1: TT) {
   log_Y[, t] <- log(Y[, t])
 }
 data_sim <- list(N = N, time.num = TT, K = K, firm.num = L, y = Y, sector = J, firm = FF)
-# save(data_sim, file = "data_sim7-16-2021") 
+save(data_sim, file = "data_sim7-16-2021") 
 
 # Sector changes of IFLS
 job <- array(data = NA, dim = c(N,TT))

@@ -31,7 +31,7 @@ all_parm <- colMeans(all_parm)
 # save(all_parm, file = "parm_fit_ifls_7-13-21.rda")
 ```  
 
-## Prepare some Parameters   
+## Prepare Parameters for Data Generation
 The worker and sector latent space, $\beta_0^k$, $\beta_1^k$, $\beta_2^k$, wage variance $\sigma_i^2$, sector effect $\nu_k$ are used in the model. Not all parameters extracted are used.
 ```{r}
 set.seed(8888)

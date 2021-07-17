@@ -19,7 +19,7 @@ tau_z <- rgamma(1, 0.5, 1)
 tau_w0 <- rgamma(1, 0.5, 1)
 # tau_w <- rgamma(1, 0.5, 1)
 tau_x0 <- rgamma(1, 0.5, 1)
-# tau_x <- rgamma(1, 0.5, 1)
+tau_x <- rgamma(1, 0.5, 1)
 
 # # Using parameters from pre-trained model
 nu <- colMeans(all_parm$nu)
@@ -107,7 +107,7 @@ for (t in 1: TT) {
     firm_effect[k, 1: L[k] , t] <- rnorm(L[k], nu[k], sd = sqrt(1/tau_k[k]))
   }
   worker_mean <- mu + firm_effect[cbind(full_index[, 2: 3], t)]
-  Y[, t] <- sapply(1: N,function(i){rnorm(1, mean = worker_mean[i], sd = sqrt(1/tau))})
+  Y[, t] <- sapply(1: N,function(i){rlnorm(1, mean = worker_mean[i], sd = sqrt(1/tau))})
 }
 
 full_info <- which(FF != 0, arr.ind = T)
@@ -122,11 +122,11 @@ for (i in 1:N) {
 table(job)
 
 par(mfrow = c(3, 2))
-hist(log(deflate_y_dat$y[, 1]), main = "IFLS Log Wage at t=1", xlab = "wage")
+hist(deflate_y_dat$y[, 1], main = "IFLS Log Wage at t=1", xlab = "wage")
 hist(Y[, 1], main = "Simulated Log Wage at t=1", xlab = "wage")
-hist(log(deflate_y_dat$y[, 2]), main = "IFLS log Wage at t=2", xlab = "wage")
+hist(deflate_y_dat$y[, 2], main = "IFLS log Wage at t=2", xlab = "wage")
 hist(Y[, 2], main = "Simulated Log Wage at t=2", xlab = "wage")
-hist(log(deflate_y_dat$y[, 3]), main = "IFLS Log Wage at t=3", xlab = "wage")
+hist(deflate_y_dat$y[, 3], main = "IFLS Log Wage at t=3", xlab = "wage")
 hist(Y[, 3], main = "Simulated Log Wage at t=3", xlab = "wage")
 
 
